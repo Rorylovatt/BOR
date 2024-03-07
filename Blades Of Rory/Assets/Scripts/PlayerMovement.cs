@@ -10,10 +10,11 @@ public class PlayerMovement : MonoBehaviour
     public Rigidbody playerRb;
     public float maxSpeed, maxFootSpeed, footAcceleration, acceleration, decceleration, explosionForce, rotateSpeed, outOfBoundsSpeedMultiplyer;
     private float speed, leftFootSpeed, rightFootSpeed, speedReset, horizontalInput, stepTime, oobSpeed;
-    private bool deccelBool, maxSpeedReached, left, right;
+    private bool deccelBool, maxSpeedReached, left, right, releaseLeft, releaseRight;
     private Animator animator;
-    public Text speedText;
+    public Text speedText, perfectText;
     public Slider leftSlider, rightSlider;
+    public int perfectCounter;
     // hello
     void Start()
     {
@@ -51,20 +52,17 @@ public class PlayerMovement : MonoBehaviour
             animator.SetBool("LeftStep", true);
             animator.SetBool("RightStep", false);
             left = true;
-            right = false;
+            releaseLeft = true;
             deccelBool = false;
             leftFootSpeed += (footAcceleration / 100) * Time.deltaTime;
-            FootSpeedMod(0.8f, false);
+            FootSpeedMod(2f, false);
         }
         if (Input.GetAxis("Fire2") == 0)
         {
-            right = true;
-            left = false;
             deccelBool = true;
             leftFootSpeed = 0;
             if(Input.GetAxis("Fire1") == 0)
             {
-                FootSpeedMod(0.8f, true);
                 stepTime -= 1;
             }
             if(stepTime < 0)
@@ -80,26 +78,38 @@ public class PlayerMovement : MonoBehaviour
             animator.SetBool("RightStep", true);
             animator.SetBool("LeftStep", false);
             right = true;
-            left = false;
+            releaseRight = true;
             deccelBool = false;
             rightFootSpeed += (footAcceleration / 100) * Time.deltaTime;
             FootSpeedMod(2f, false);
         }
         if (Input.GetAxis("Fire1") == 0)
         {
-            left = true;
-            right = false;
             deccelBool = true;
             rightFootSpeed = 0;
             if (Input.GetAxis("Fire2") == 0)
             {
-                FootSpeedMod(2f, true);
                 stepTime -= Time.deltaTime;
             }
             if (stepTime < 0)
             {
                 animator.SetBool("RightStep", false);
             }
+        }
+        if (Input.GetAxis("Fire1") == 0 && releaseRight == true)
+        {
+            right = false;
+            left = true;
+            releaseRight = false;
+            FootSpeedMod(2f, true);
+        }
+        if (Input.GetAxis("Fire2") == 0 && releaseLeft == true)
+        {
+            right = true;
+            left = false;
+            releaseLeft = false;
+            FootSpeedMod(2f, true);
+
         }
         // Speed sorters 
         if (deccelBool && speed > 0)
@@ -138,6 +148,7 @@ public class PlayerMovement : MonoBehaviour
         //speedText.text = Input.GetAxis("Fire2").ToString();
         leftSlider.value = leftFootSpeed / maxFootSpeed;
         rightSlider.value = rightFootSpeed / maxFootSpeed;
+        perfectText.text = "Perfects : " + perfectCounter.ToString();
     }
     public void FootSpeedMod(float mod, bool release)
     {
@@ -151,6 +162,7 @@ public class PlayerMovement : MonoBehaviour
             if (release && speed > (1 * mod) * Time.deltaTime)
             {
                 speed = speed - (1 * mod) * Time.deltaTime;
+                perfectCounter = 0;
             }
         }
         // medium amount on foot
@@ -163,6 +175,7 @@ public class PlayerMovement : MonoBehaviour
             if (release && speed > (0.5f * mod) * Time.deltaTime)
             {
                 speed = speed - (0.5f * mod) * Time.deltaTime;
+                perfectCounter = 0;
             }
         }
         // max amount on foot
@@ -174,7 +187,7 @@ public class PlayerMovement : MonoBehaviour
             }
             if (release && speed > speed - (1 * mod) * Time.deltaTime)
             {
-                //speed = speed - (1 * mod) * Time.deltaTime;
+                perfectCounter += 1;
             }
         }
         else // least amount of time on foot
@@ -186,6 +199,8 @@ public class PlayerMovement : MonoBehaviour
             if (release && speed > (10 * mod) * Time.deltaTime)
             {
                 speed = speed - (3 * mod) * Time.deltaTime;
+                perfectCounter = 0;
+
             }
         }
     }
