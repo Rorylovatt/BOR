@@ -8,9 +8,9 @@ public class PlayerMovement : MonoBehaviour
     // Start is called before the first frame update
     public GameObject leftFoot, rightFoot;
     public Rigidbody playerRb;
-    public float maxSpeed, maxFootSpeed, footAcceleration, acceleration, decceleration, explosionForce, rotateSpeed;
-    private float speed, leftFootSpeed, rightFootSpeed, speedReset, horizontalInput, stepTime;
-    private bool deccelBool, maxSpeedReached, left;
+    public float maxSpeed, maxFootSpeed, footAcceleration, acceleration, decceleration, explosionForce, rotateSpeed, outOfBoundsSpeedMultiplyer;
+    private float speed, leftFootSpeed, rightFootSpeed, speedReset, horizontalInput, stepTime, oobSpeed;
+    private bool deccelBool, maxSpeedReached, left, right;
     private Animator animator;
     public Text speedText;
     public Slider leftSlider, rightSlider;
@@ -18,6 +18,7 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         animator = GetComponentInChildren<Animator>();
+        oobSpeed = maxSpeed / outOfBoundsSpeedMultiplyer;
     }
 
     // Update is called once per frame
@@ -40,7 +41,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Rotate();
         transform.Translate(Vector3.forward * Time.deltaTime * speed);
-        animator.SetFloat("Speed", speed);
+        animator.SetFloat("Speed", speed) ;
 
         // Left foot
         if (Input.GetAxis("Fire2") == 1 && leftFootSpeed < maxFootSpeed && (left || speed == 0) && !maxSpeedReached)
@@ -50,17 +51,20 @@ public class PlayerMovement : MonoBehaviour
             animator.SetBool("LeftStep", true);
             animator.SetBool("RightStep", false);
             left = true;
+            right = false;
             deccelBool = false;
-            leftFootSpeed += (footAcceleration / 100);
-            FootSpeedMod(0.8f);
+            leftFootSpeed += (footAcceleration / 100) * Time.deltaTime;
+            FootSpeedMod(0.8f, false);
         }
         if (Input.GetAxis("Fire2") == 0)
         {
-            left = false; 
+            right = true;
+            left = false;
             deccelBool = true;
             leftFootSpeed = 0;
             if(Input.GetAxis("Fire1") == 0)
             {
+                FootSpeedMod(0.8f, true);
                 stepTime -= 1;
             }
             if(stepTime < 0)
@@ -69,24 +73,27 @@ public class PlayerMovement : MonoBehaviour
             }
         }
         // Right Foot
-        if (Input.GetAxis("Fire1") == 1 && rightFootSpeed < maxFootSpeed && (!left || speed == 0) && !maxSpeedReached)
+        if (Input.GetAxis("Fire1") == 1 && rightFootSpeed < maxFootSpeed && (right || speed == 0) && !maxSpeedReached)
         {
             animator.SetBool("Trip", false);
             stepTime = 2;
             animator.SetBool("RightStep", true);
             animator.SetBool("LeftStep", false);
+            right = true;
             left = false;
             deccelBool = false;
-            rightFootSpeed += (footAcceleration / 100);
-            FootSpeedMod(2f);
+            rightFootSpeed += (footAcceleration / 100) * Time.deltaTime;
+            FootSpeedMod(2f, false);
         }
         if (Input.GetAxis("Fire1") == 0)
         {
             left = true;
+            right = false;
             deccelBool = true;
             rightFootSpeed = 0;
             if (Input.GetAxis("Fire2") == 0)
             {
+                FootSpeedMod(2f, true);
                 stepTime -= Time.deltaTime;
             }
             if (stepTime < 0)
@@ -97,7 +104,7 @@ public class PlayerMovement : MonoBehaviour
         // Speed sorters 
         if (deccelBool && speed > 0)
         {
-            speed = speed - (decceleration / 100);
+            speed = speed - (decceleration / 100) * Time.deltaTime;
         }
         if (speed <= 0)
         {
@@ -116,8 +123,8 @@ public class PlayerMovement : MonoBehaviour
         if (maxSpeedReached)
         {
             speedReset = speed / 2;
-            speed = speed - (decceleration / 30);
-            if(speed < speedReset)
+            speed = speed - (decceleration / 30) * Time.deltaTime;
+            if (speed < speedReset)
             {
                 maxSpeedReached = false;
                 deccelBool = true;
@@ -132,31 +139,75 @@ public class PlayerMovement : MonoBehaviour
         leftSlider.value = leftFootSpeed / maxFootSpeed;
         rightSlider.value = rightFootSpeed / maxFootSpeed;
     }
-    public void FootSpeedMod(float mod)
+    public void FootSpeedMod(float mod, bool release)
     {
-        if((rightFootSpeed < maxFootSpeed / 3 || leftFootSpeed < maxFootSpeed / 3) && (rightFootSpeed > maxFootSpeed / 2 || leftFootSpeed > maxFootSpeed / 2))
+        // low amount on foot
+        if ((rightFootSpeed < maxFootSpeed / 3 || leftFootSpeed < maxFootSpeed / 3) && (rightFootSpeed > maxFootSpeed / 2 || leftFootSpeed > maxFootSpeed / 2))
         {
-            speed = speed + (acceleration / (300 * mod));
+            if(!release)
+            {
+                speed = speed + (acceleration / (300 * mod) * Time.deltaTime);
+            }
+            if (release && speed > (1 * mod) * Time.deltaTime)
+            {
+                speed = speed - (1 * mod) * Time.deltaTime;
+            }
         }
+        // medium amount on foot
         if ((rightFootSpeed < maxFootSpeed / 2 || leftFootSpeed < maxFootSpeed / 2) && (rightFootSpeed > maxFootSpeed / 1.5f || leftFootSpeed > maxFootSpeed / 1.5f))
         {
-            speed = speed + (acceleration / (200 * mod));
+            if (!release)
+            {
+                speed = speed + (acceleration / (200 * mod) * Time.deltaTime);
+            }
+            if (release && speed > (0.5f * mod) * Time.deltaTime)
+            {
+                speed = speed - (0.5f * mod) * Time.deltaTime;
+            }
         }
+        // max amount on foot
         if ((rightFootSpeed < maxFootSpeed / 1.5f || leftFootSpeed < maxFootSpeed / 1.5f) && (rightFootSpeed > maxFootSpeed / 1.2f || leftFootSpeed > maxFootSpeed / 1.2f))
         {
-            speed = speed + (acceleration / (150 * mod));
+            if (!release)
+            {
+                speed = speed + (acceleration / (150 * mod) * Time.deltaTime);
+            }
+            if (release && speed > speed - (1 * mod) * Time.deltaTime)
+            {
+                //speed = speed - (1 * mod) * Time.deltaTime;
+            }
         }
-        else
+        else // least amount of time on foot
         {
-            speed = speed + (acceleration / (100 * mod));
+            if (!release)
+            {
+                speed = speed + (acceleration / (100 * mod) * Time.deltaTime);
+            }
+            if (release && speed > (10 * mod) * Time.deltaTime)
+            {
+                speed = speed - (3 * mod) * Time.deltaTime;
+            }
         }
     }
+
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.tag == "Wall")
+        if (collision.gameObject.tag == "Wall")
         {
             playerRb.AddExplosionForce(100 * Time.deltaTime * explosionForce * speed, collision.contacts[0].point, 10f);
             speed = 0;
+        }
+        if (collision.gameObject.tag == "OutOfBounds")
+        {
+            animator.SetBool("Trip", true);
+            maxSpeed = oobSpeed;
+        }
+    }
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.tag == "OutOfBounds")
+        {
+            maxSpeed = oobSpeed * outOfBoundsSpeedMultiplyer;
         }
     }
 
