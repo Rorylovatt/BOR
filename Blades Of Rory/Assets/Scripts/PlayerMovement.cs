@@ -9,9 +9,9 @@ public class PlayerMovement : MonoBehaviour
     // Start is called before the first frame update
     public GameObject leftFoot, rightFoot;
     public Rigidbody playerRb;
-    public float maxSpeed, maxFootSpeed, footAcceleration, acceleration, decceleration, explosionForce, rotateSpeed, outOfBoundsSpeedMultiplyer, boostSpeed;
-    private float speed, leftFootSpeed, rightFootSpeed, speedReset, horizontalInput, stepTime, oobSpeed, boostMaxSpeed;
-    private bool deccelBool, maxSpeedReached, left, right, releaseLeft, releaseRight, boost;
+    public float maxSpeed, maxFootSpeed, footAcceleration, acceleration, decceleration, explosionForce, rotateSpeed, outOfBoundsSpeedMultiplyer, boostSpeedMultiplyer;
+    private float speed, leftFootSpeed, rightFootSpeed, speedReset, horizontalInput, stepTime, oobSpeed, boostSpeed;
+    private bool deccelBool, maxSpeedReached, left, right, releaseLeft, releaseRight, boost, boostReady;
     private Animator animator;
     public Text speedText, perfectText;
     public Slider leftSlider, rightSlider;
@@ -19,7 +19,6 @@ public class PlayerMovement : MonoBehaviour
     // hello
     void Start()
     {
-        boostMaxSpeed = maxSpeed + boostSpeed;
         animator = GetComponentInChildren<Animator>();
         oobSpeed = maxSpeed / outOfBoundsSpeedMultiplyer;
     }
@@ -29,6 +28,22 @@ public class PlayerMovement : MonoBehaviour
     {
         Movement();
         Debugtext();
+    }
+
+    public void Movement()
+    {
+        Rotate();
+        animator.SetFloat("Speed", speed);
+        Speed();
+        if (!boost)
+        {
+            transform.Translate(Vector3.forward * Time.deltaTime * speed);
+            Controls();
+        } 
+        if(boost)
+        {
+            transform.Translate(Vector3.forward * Time.deltaTime * boostSpeed);
+        }
     }
     public void Rotate()
     {
@@ -40,21 +55,10 @@ public class PlayerMovement : MonoBehaviour
 
         }
     }
-    public void Movement()
-    {
-        Rotate();
-        transform.Translate(Vector3.forward * Time.deltaTime * speed);
-        animator.SetFloat("Speed", speed);
-        if (!boost)
-        {
-            Controls();
-        }
-        Speed();
-    }
     public void Speed()
     {
         // Deccelrate 
-        if (deccelBool && speed > 0)
+        if (deccelBool && speed > 0 && !boost)
         {
             speed -= (decceleration / 100) * Time.deltaTime;
         }
@@ -88,25 +92,25 @@ public class PlayerMovement : MonoBehaviour
         //boost
         if (perfectCounter >= 3)
         {
-            maxSpeed = boostMaxSpeed;
-            speed = speed + boostSpeed * Time.deltaTime;
+            boostReady = true;
+            boostSpeed = speed + boostSpeedMultiplyer;
+        }
+        if(boostReady && Input.GetButtonDown("Jump"))
+        {
             boost = true;
-
-
+            boostReady = false; 
         }
         if (boost)
         {
-            float tempSpeed = speed;
+            animator.SetBool("LeftStep", false);
+            animator.SetBool("RightStep", false);
             perfectCounter = 0;
-
-            if(speed > tempSpeed)
+            if (boostSpeed > speed)
             {
-                speed -= (decceleration / 1000) * Time.deltaTime;
+                boostSpeed -= (decceleration / 40) * Time.deltaTime;
             }
             else
             {
-                maxSpeed = boostMaxSpeed - boostSpeed;
-                speed = tempSpeed;
                 boost = false;
             }
         }
@@ -314,5 +318,27 @@ public class PlayerMovement : MonoBehaviour
 
 //        }
 //    }
-//}
+//} 
+
+
+//if (boost)
+        //{
+        //    maxSpeed = boostMaxSpeed;
+        //    speed = speed + boostSpeed * Time.deltaTime;
+        //    float tempSpeed = speed;
+        //    perfectCounter = 0;
+
+        //    if(speed > tempSpeed)
+        //    {
+        //        speed -= (decceleration / 1000) * Time.deltaTime;
+        //    }
+        //    else
+        //    {
+        //        maxSpeed = boostMaxSpeed - boostSpeed;
+        //        speed = tempSpeed;
+        //        boost = false;
+        //    }
+        //}
+
+
 #endregion
