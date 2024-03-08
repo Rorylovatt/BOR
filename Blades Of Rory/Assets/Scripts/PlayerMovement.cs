@@ -39,8 +39,8 @@ public class PlayerMovement : MonoBehaviour
         {
             transform.Translate(Vector3.forward * Time.deltaTime * speed);
             Controls();
-        } 
-        if(boost)
+        }
+        if (boost)
         {
             transform.Translate(Vector3.forward * Time.deltaTime * boostSpeed);
         }
@@ -95,10 +95,15 @@ public class PlayerMovement : MonoBehaviour
             boostReady = true;
             boostSpeed = speed + boostSpeedMultiplyer;
         }
-        if(boostReady && Input.GetButtonDown("Jump"))
+        if (boostReady && Input.GetButtonDown("Jump"))
         {
+            animator.SetBool("Boost", true);
             boost = true;
-            boostReady = false; 
+            boostReady = false;
+        }
+        if (animator.GetBool("Boost"))
+        {
+            animator.SetBool("Boost", false);
         }
         if (boost)
         {
@@ -112,6 +117,8 @@ public class PlayerMovement : MonoBehaviour
             else
             {
                 boost = false;
+                right = true;
+                left = true;
             }
         }
     }
@@ -195,7 +202,16 @@ public class PlayerMovement : MonoBehaviour
 
     public void Debugtext()
     {
-        speedText.text = "Speed : " + speed.ToString();
+        if (!boost)
+        {
+            speedText.text = "Speed : " + speed.ToString();
+
+        }
+        else
+        {
+            speedText.text = "Boost! : " + boostSpeed.ToString();
+
+        }
         //speedText.text = Input.GetAxis("Fire2").ToString();
         leftSlider.value = leftFootSpeed / maxFootSpeed;
         rightSlider.value = rightFootSpeed / maxFootSpeed;
@@ -322,23 +338,23 @@ public class PlayerMovement : MonoBehaviour
 
 
 //if (boost)
-        //{
-        //    maxSpeed = boostMaxSpeed;
-        //    speed = speed + boostSpeed * Time.deltaTime;
-        //    float tempSpeed = speed;
-        //    perfectCounter = 0;
+//{
+//    maxSpeed = boostMaxSpeed;
+//    speed = speed + boostSpeed * Time.deltaTime;
+//    float tempSpeed = speed;
+//    perfectCounter = 0;
 
-        //    if(speed > tempSpeed)
-        //    {
-        //        speed -= (decceleration / 1000) * Time.deltaTime;
-        //    }
-        //    else
-        //    {
-        //        maxSpeed = boostMaxSpeed - boostSpeed;
-        //        speed = tempSpeed;
-        //        boost = false;
-        //    }
-        //}
+//    if(speed > tempSpeed)
+//    {
+//        speed -= (decceleration / 1000) * Time.deltaTime;
+//    }
+//    else
+//    {
+//        maxSpeed = boostMaxSpeed - boostSpeed;
+//        speed = tempSpeed;
+//        boost = false;
+//    }
+//}
 
 
 #endregion
