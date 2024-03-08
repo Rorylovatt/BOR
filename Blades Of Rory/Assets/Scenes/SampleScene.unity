@@ -2792,6 +2792,7 @@ MonoBehaviour:
   explosionForce: 15
   rotateSpeed: 0.5
   outOfBoundsSpeedMultiplyer: 4
+  boostSpeed: 10000
   speedText: {fileID: 834234101}
   perfectText: {fileID: 560919364}
   leftSlider: {fileID: 1960081994}
