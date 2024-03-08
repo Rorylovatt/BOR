@@ -97,14 +97,11 @@ public class PlayerMovement : MonoBehaviour
         }
         if (boostReady && Input.GetButtonDown("Jump"))
         {
-            animator.SetBool("Boost", true);
+            animator.SetTrigger("Boost");
             boost = true;
             boostReady = false;
         }
-        if (animator.GetBool("Boost"))
-        {
-            animator.SetBool("Boost", false);
-        }
+
         if (boost)
         {
             animator.SetBool("LeftStep", false);
