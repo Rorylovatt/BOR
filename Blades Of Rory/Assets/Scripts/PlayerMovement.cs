@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,11 +6,11 @@ public class PlayerMovement : MonoBehaviour
     // Start is called before the first frame update
     public GameObject leftFoot, rightFoot;
     public Rigidbody playerRb;
-    public float maxSpeed, maxFootSpeed, footAcceleration, acceleration, decceleration, explosionForce, rotateSpeed, outOfBoundsSpeedMultiplyer, boostSpeedMultiplyer;
-    private float speed, leftFootSpeed, rightFootSpeed, speedReset, horizontalInput, stepTime, oobSpeed, boostSpeed;
+    public float maxSpeed, maxFootSpeed, footAcceleration, acceleration, decceleration, explosionForce, rotateSpeed, outOfBoundsSpeedMultiplyer, boostSpeedMultiplyer, speed;
+    private float leftFootSpeed, rightFootSpeed, speedReset, horizontalInput, stepTime, oobSpeed, boostSpeed;
     private bool deccelBool, maxSpeedReached, left, right, releaseLeft, releaseRight, boost, boostReady;
     private Animator animator;
-    public Text speedText, perfectText;
+    public Text perfectText;
     public Slider leftSlider, rightSlider;
     public int perfectCounter;
     // hello
@@ -199,16 +196,16 @@ public class PlayerMovement : MonoBehaviour
 
     public void Debugtext()
     {
-        if (!boost)
-        {
-            speedText.text = "Speed : " + speed.ToString();
+        //if (!boost)
+        //{
+        //    speedText.text = "Speed : " + speed.ToString();
 
-        }
-        else
-        {
-            speedText.text = "Boost! : " + boostSpeed.ToString();
+        //}
+        //else
+        //{
+        //    speedText.text = "Boost! : " + boostSpeed.ToString();
 
-        }
+        //}
         //speedText.text = Input.GetAxis("Fire2").ToString();
         leftSlider.value = leftFootSpeed / maxFootSpeed;
         rightSlider.value = rightFootSpeed / maxFootSpeed;
