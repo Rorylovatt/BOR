@@ -9,6 +9,7 @@ public class EndScore : MonoBehaviour
 {
     public int score, streak;
     public string playerName;
+    Racemanager racemanager;
     //public TextMeshProUGUI endScore;
 
     public UnityEvent<string, int> submitScoreEvent;
@@ -16,10 +17,12 @@ public class EndScore : MonoBehaviour
 
     private void Start()
     {
+        racemanager = FindObjectOfType<Racemanager>();
         //characterSelection= FindObjectOfType<CharacterSelection>();
     }
     public void Update()
     {
+        score = racemanager.score;
         //playerName = characterSelection.playerName;
        // score= characterSelection.score;
         //endScore.text = playerName + "\nYou Scored : " + score.ToString();

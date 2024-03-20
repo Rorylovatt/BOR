@@ -18,7 +18,7 @@ public class ScoreController : MonoBehaviour
 
     public TMP_InputField playerNameInput;
 
-    GameObject gameManager;
+    Racemanager racemanager;
 
     public int score, streak;
 
@@ -31,10 +31,14 @@ public class ScoreController : MonoBehaviour
 
     private void Start()
     {
-        gameManager = GameObject.Find("GameManager");
+        racemanager = FindObjectOfType<Racemanager>();
     }
     private void Update()
     {
+        if(racemanager.raceFinish)
+        {
+            score = racemanager.score;
+        }
         GetLeaderboard();
 
         //SetLeaderboardEntry(playerName, score);
@@ -48,7 +52,8 @@ public class ScoreController : MonoBehaviour
             for (int i = 0; i < names.Count; i++)
             {
                 names[i].text = msg[i].Username;
-                scores[i].text = msg[i].Score.ToString();
+                //scores[i].text = msg[i].Score.ToString();
+                scores[i].text = msg[i].Score.ToString().Substring(0, msg[i].Score.ToString().Length - 3) + "." + msg[i].Score.ToString().Substring(msg[i].Score.ToString().Length - 3, 3);
             }
         }));
     }
@@ -66,7 +71,7 @@ public class ScoreController : MonoBehaviour
     }
     public void ResetGame()
     {
-        Destroy(gameManager);
+        //Destroy(gameManager);
         SceneManager.LoadScene(0);
     }
 }

@@ -13,9 +13,11 @@ public class PlayerMovement : MonoBehaviour
     public Text perfectText;
     public Slider leftSlider, rightSlider;
     public int perfectCounter;
+    Racemanager racemanager;
     // hello
     void Start()
     {
+        racemanager = FindObjectOfType<Racemanager>();
         animator = GetComponentInChildren<Animator>();
         oobSpeed = maxSpeed / outOfBoundsSpeedMultiplyer;
     }
@@ -29,13 +31,27 @@ public class PlayerMovement : MonoBehaviour
 
     public void Movement()
     {
-        Rotate();
+        if (!racemanager.raceFinish)
+        {
+            Rotate();
+        }
+        else
+        {
+            animator.SetBool("Win", true);
+            animator.SetBool("LeftStep", false);
+            animator.SetBool("RightStep", false);
+            animator.SetBool("Trip", false);
+        }
         animator.SetFloat("Speed", speed);
         Speed();
         if (!boost)
         {
             transform.Translate(Vector3.forward * Time.deltaTime * speed);
-            Controls();
+            if(!racemanager.raceFinish)
+            {
+                Controls();
+
+            }
         }
         if (boost)
         {
@@ -55,7 +71,7 @@ public class PlayerMovement : MonoBehaviour
     public void Speed()
     {
         // Deccelrate 
-        if (deccelBool && speed > 0 && !boost)
+        if ((deccelBool && speed > 0 && !boost) || racemanager.raceFinish)
         {
             speed -= (decceleration / 100) * Time.deltaTime;
         }
@@ -92,7 +108,7 @@ public class PlayerMovement : MonoBehaviour
             boostReady = true;
             boostSpeed = speed + boostSpeedMultiplyer;
         }
-        if (boostReady && Input.GetButtonDown("Jump"))
+        if (boostReady && Input.GetButtonDown("Jump") && ! maxSpeedReached)
         {
             animator.SetTrigger("Boost");
             boost = true;
