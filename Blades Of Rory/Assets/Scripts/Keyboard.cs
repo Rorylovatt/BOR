@@ -8,7 +8,8 @@ using UnityEngine.EventSystems;
 
 public class Keyboard : MonoBehaviour
 {
-    public TextMeshProUGUI name;
+    public TextMeshProUGUI nameText, scoreText;
+    public int score;
     public Button selectFirst;
     public bool active;
     // Start is called before the first frame update
@@ -21,17 +22,24 @@ public class Keyboard : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (score > 1000)
+        {
+            scoreText.text = "Score : " + score.ToString().Substring(0, score.ToString().Length - 3) + "." + score.ToString().Substring(score.ToString().Length - 3, 3);
+        }
     }
     public void OnClickAdd()
     {
-        name.text += EventSystem.current.currentSelectedGameObject.name.ToString();
+        if(nameText.text.Length < 12)
+        {
+            nameText.text += EventSystem.current.currentSelectedGameObject.name.ToString();
+        }
 
     }
     public void OnClickDelete()
     {
-        if(name.text.Length > 0)
+        if(nameText.text.Length > 0)
         {
-            name.text = name.text.Substring(0, name.text.Length - 1);
+            nameText.text = nameText.text.Substring(0, nameText.text.Length - 1);
         }
     }
 }

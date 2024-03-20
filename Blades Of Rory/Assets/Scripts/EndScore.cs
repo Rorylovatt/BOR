@@ -18,20 +18,21 @@ public class EndScore : MonoBehaviour
 
     private void Start()
     {
-        keyboard = FindFirstObjectByType<Keyboard>();
+        keyboard = FindObjectOfType<Keyboard>();
         racemanager = FindObjectOfType<Racemanager>();
         //characterSelection= FindObjectOfType<CharacterSelection>();
     }
     public void Update()
     {
-        score = racemanager.score;
-        playerName = keyboard.name.text;
+
         //playerName = characterSelection.playerName;
        // score= characterSelection.score;
         //endScore.text = playerName + "\nYou Scored : " + score.ToString();
     }
     public void SubmitScore()
     {
+        score = racemanager.score;
+        playerName = keyboard.nameText.text;
         submitScoreEvent.Invoke(playerName, score);
     }
 }
