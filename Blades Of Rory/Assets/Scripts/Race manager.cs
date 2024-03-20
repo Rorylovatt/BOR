@@ -17,11 +17,13 @@ public class Racemanager : MonoBehaviour
     public Text timerText;
     public TextMeshProUGUI scoreText;
     public GameObject highScoreMenu;
+    Keyboard keyboard;
 
     // Start is called before the first frame update
     void Start()
     {
         playerMovement = FindObjectOfType<PlayerMovement>();
+        keyboard = FindObjectOfType<Keyboard>();
     }
 
     // Update is called once per frame
@@ -66,6 +68,7 @@ public class Racemanager : MonoBehaviour
             else
             {
                 highScoreMenu.SetActive(true);
+               // keyboard.active = true; 
             }
         }
         

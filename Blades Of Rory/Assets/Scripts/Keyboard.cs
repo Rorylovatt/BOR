@@ -9,16 +9,18 @@ using UnityEngine.EventSystems;
 public class Keyboard : MonoBehaviour
 {
     public TextMeshProUGUI name;
+    public Button selectFirst;
+    public bool active;
     // Start is called before the first frame update
     void Start()
     {
-        
+        selectFirst.Select();
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
     }
     public void OnClickAdd()
     {
