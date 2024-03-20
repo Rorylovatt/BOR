@@ -50,6 +50,7 @@ public class Racemanager : MonoBehaviour
             raceFinish = true;
         }
         score = (int)(timeElapsed * 1000f);
+        //keyboard.score = score;
         timerText.text = "Time : " + timeElapsed.ToString();
         if (raceStart)
         {

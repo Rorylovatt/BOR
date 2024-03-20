@@ -26,12 +26,13 @@ public class EndScore : MonoBehaviour
     {
 
         //playerName = characterSelection.playerName;
-       // score= characterSelection.score;
+        // score= characterSelection.score;
         //endScore.text = playerName + "\nYou Scored : " + score.ToString();
+        score = racemanager.score;
+        keyboard.score = score;
     }
     public void SubmitScore()
     {
-        score = racemanager.score;
         playerName = keyboard.nameText.text;
         submitScoreEvent.Invoke(playerName, score);
     }

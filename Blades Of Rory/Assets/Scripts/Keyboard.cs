@@ -22,6 +22,7 @@ public class Keyboard : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         if (score > 1000)
         {
             scoreText.text = "Score : " + score.ToString().Substring(0, score.ToString().Length - 3) + "." + score.ToString().Substring(score.ToString().Length - 3, 3);
