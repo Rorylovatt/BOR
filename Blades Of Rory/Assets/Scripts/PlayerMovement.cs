@@ -8,7 +8,7 @@ public class PlayerMovement : MonoBehaviour
     public Rigidbody playerRb;
     public float maxSpeed, maxFootSpeed, footAcceleration, acceleration, decceleration, explosionForce, rotateSpeed, outOfBoundsSpeedMultiplyer, boostSpeedMultiplyer, speed;
     private float leftFootSpeed, rightFootSpeed, speedReset, horizontalInput, stepTime, oobSpeed, boostSpeed;
-    private bool deccelBool, maxSpeedReached, left, right, releaseLeft, releaseRight, boost, boostReady;
+    private bool deccelBool, maxSpeedReached, left, right, releaseLeft, releaseRight, boost, boostReady, outOfBounds;
     private Animator animator;
     public Text perfectText;
     public Slider leftSlider, rightSlider;
@@ -47,7 +47,7 @@ public class PlayerMovement : MonoBehaviour
         if (!boost)
         {
             transform.Translate(Vector3.forward * Time.deltaTime * speed);
-            if(!racemanager.raceFinish)
+            if (!racemanager.raceFinish)
             {
                 Controls();
 
@@ -103,12 +103,16 @@ public class PlayerMovement : MonoBehaviour
             }
         }
         //boost
+        if(outOfBounds)
+        {
+            perfectCounter = 0;
+        }
         if (perfectCounter >= 3)
         {
             boostReady = true;
             boostSpeed = speed + boostSpeedMultiplyer;
         }
-        if (boostReady && Input.GetButtonDown("Jump") && ! maxSpeedReached)
+        if (boostReady && Input.GetButtonDown("Jump") && !maxSpeedReached)
         {
             animator.SetTrigger("Boost");
             boost = true;
@@ -273,11 +277,21 @@ public class PlayerMovement : MonoBehaviour
         {
             playerRb.AddExplosionForce(100 * Time.deltaTime * explosionForce * speed, collision.contacts[0].point, 10f);
             speed = 0;
+            //if(!boost)
+            //{
+            //    playerRb.AddExplosionForce(100 * Time.deltaTime * explosionForce * speed, collision.contacts[0].point, 10f);
+            //    speed = 0;
+            //}
+            //else
+            //{
+            //    playerRb.AddForce(-transform.forward * explosionForce * Time.deltaTime * 100f);
+            //}
         }
         if (collision.gameObject.tag == "OutOfBounds")
         {
             animator.SetBool("Trip", true);
             maxSpeed = oobSpeed;
+            outOfBounds = true;
         }
     }
     private void OnCollisionExit(Collision collision)
@@ -285,6 +299,7 @@ public class PlayerMovement : MonoBehaviour
         if (collision.gameObject.tag == "OutOfBounds")
         {
             maxSpeed = oobSpeed * outOfBoundsSpeedMultiplyer;
+            outOfBounds = false;
         }
     }
 
