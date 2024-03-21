@@ -11514,7 +11514,7 @@ Rigidbody:
     serializedVersion: 2
     m_Bits: 0
   m_ImplicitCom: 1
-  m_ImplicitTensor: 0
+  m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -11536,7 +11536,7 @@ CapsuleCollider:
     m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
-  m_ProvidesContacts: 0
+  m_ProvidesContacts: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
@@ -11585,6 +11585,8 @@ MonoBehaviour:
   outOfBoundsSpeedMultiplyer: 4
   boostSpeedMultiplyer: 15
   speed: 0
+  perfectBool: 0
+  boost: 0
   perfectText: {fileID: 560919364}
   leftSlider: {fileID: 1960081994}
   rightSlider: {fileID: 703881796}
@@ -11601,9 +11603,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a21fc1ad508451a42b85b7e905d85f01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fxMultiplyer: 0.01
+  volume: {fileID: 653260036}
   blades:
   - {fileID: 1154814033}
   - {fileID: 1964630442}
+  chromaAberFloat: 0
+  lensDistFloat: 0
 --- !u!1 &1140946435 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 158912, guid: 20b8224cf30b7774ab049e18bd8c6cca, type: 3}

@@ -7,8 +7,9 @@ public class PlayerMovement : MonoBehaviour
     public GameObject leftFoot, rightFoot;
     public Rigidbody playerRb;
     public float maxSpeed, maxFootSpeed, footAcceleration, acceleration, decceleration, explosionForce, rotateSpeed, outOfBoundsSpeedMultiplyer, boostSpeedMultiplyer, speed;
+    public bool boost;
     private float leftFootSpeed, rightFootSpeed, speedReset, horizontalInput, stepTime, oobSpeed, boostSpeed;
-    private bool deccelBool, maxSpeedReached, left, right, releaseLeft, releaseRight, boost, boostReady, outOfBounds;
+    private bool deccelBool, maxSpeedReached, left, right, releaseLeft, releaseRight, boostReady, outOfBounds;
     private Animator animator;
     public Text perfectText;
     public Slider leftSlider, rightSlider;
@@ -110,10 +111,10 @@ public class PlayerMovement : MonoBehaviour
         if (perfectCounter >= 3)
         {
             boostReady = true;
-            boostSpeed = speed + boostSpeedMultiplyer;
         }
         if (boostReady && Input.GetButtonDown("Jump") && !maxSpeedReached)
         {
+            boostSpeed = speed + boostSpeedMultiplyer;
             animator.SetTrigger("Boost");
             boost = true;
             boostReady = false;
