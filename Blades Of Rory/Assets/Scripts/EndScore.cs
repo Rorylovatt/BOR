@@ -11,6 +11,7 @@ public class EndScore : MonoBehaviour
     public string playerName;
     Racemanager racemanager;
     Keyboard keyboard;
+    ScoreController scoreController;
     //public TextMeshProUGUI endScore;
 
     public UnityEvent<string, int> submitScoreEvent;
@@ -20,6 +21,7 @@ public class EndScore : MonoBehaviour
     {
         keyboard = FindObjectOfType<Keyboard>();
         racemanager = FindObjectOfType<Racemanager>();
+        scoreController = FindObjectOfType<ScoreController>();
         //characterSelection= FindObjectOfType<CharacterSelection>();
     }
     public void Update()
@@ -34,6 +36,8 @@ public class EndScore : MonoBehaviour
     public void SubmitScore()
     {
         playerName = keyboard.nameText.text;
+        scoreController.playerName = playerName;
+        scoreController.score = score;
         submitScoreEvent.Invoke(playerName, score);
     }
 }

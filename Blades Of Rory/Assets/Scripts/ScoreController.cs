@@ -35,11 +35,12 @@ public class ScoreController : MonoBehaviour
     }
     private void Update()
     {
-        if(racemanager.raceFinish)
-        {
-            score = racemanager.score;
-        }
-        GetLeaderboard();
+        //if(racemanager.raceFinish)
+        //{
+        //    score = racemanager.score;
+        //    //GetLeaderboard();
+
+        //}
 
         //SetLeaderboardEntry(playerName, score);
         //SubmitScore();
