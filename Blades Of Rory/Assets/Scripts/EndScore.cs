@@ -38,6 +38,14 @@ public class EndScore : MonoBehaviour
         playerName = keyboard.nameText.text;
         scoreController.playerName = playerName;
         scoreController.score = score;
-        submitScoreEvent.Invoke(playerName, score);
+        if(playerName.Length > 0)
+        {
+            submitScoreEvent.Invoke(playerName, score);
+        }
+        else
+        {
+            submitScoreEvent.Invoke("BLANKER", score);
+
+        }
     }
 }

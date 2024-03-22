@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour
 {
+    #region Variables Start Update
     // Start is called before the first frame update
     public GameObject leftFoot, rightFoot;
     public Rigidbody playerRb;
@@ -26,10 +27,16 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Movement();
+        if(racemanager.raceStart)
+        {
+            Movement();
+
+        }
         Debugtext();
     }
+    #endregion
 
+    #region Main Movement Functions
     public void Movement()
     {
         if (!racemanager.raceFinish)
@@ -137,6 +144,9 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
+    #endregion
+
+    #region Controls
     public void Controls()
     {
         //ButtonPress("Fire2", "LeftStep", "RightStep", leftFootSpeed, left, releaseLeft);
@@ -213,26 +223,8 @@ public class PlayerMovement : MonoBehaviour
             footSpeed += (footAcceleration / 100) * Time.deltaTime;
             FootSpeedMod(2f, false, footSpeed);
         }
+
     }
-
-    public void Debugtext()
-    {
-        //if (!boost)
-        //{
-        //    speedText.text = "Speed : " + speed.ToString();
-
-        //}
-        //else
-        //{
-        //    speedText.text = "Boost! : " + boostSpeed.ToString();
-
-        //}
-        //speedText.text = Input.GetAxis("Fire2").ToString();
-        leftSlider.value = leftFootSpeed / maxFootSpeed;
-        rightSlider.value = rightFootSpeed / maxFootSpeed;
-        perfectText.text = "Perfects : " + perfectCounter.ToString();
-    }
-
     public void FootSpeedMod(float mod, bool release, float footSpeed)
     {
         // least amount on foot
@@ -271,6 +263,11 @@ public class PlayerMovement : MonoBehaviour
             speed = speed - ((multiplyer / 3) * mod) * Time.deltaTime;
         }
     }
+    #endregion
+
+
+
+    #region Collisions
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -303,8 +300,24 @@ public class PlayerMovement : MonoBehaviour
             outOfBounds = false;
         }
     }
+    #endregion
+    public void Debugtext()
+    {
+        //if (!boost)
+        //{
+        //    speedText.text = "Speed : " + speed.ToString();
 
+        //}
+        //else
+        //{
+        //    speedText.text = "Boost! : " + boostSpeed.ToString();
 
+        //}
+        //speedText.text = Input.GetAxis("Fire2").ToString();
+        leftSlider.value = leftFootSpeed / maxFootSpeed;
+        rightSlider.value = rightFootSpeed / maxFootSpeed;
+        perfectText.text = "Perfects : " + perfectCounter.ToString();
+    }
 }
 #region Unused Functions
 //public void FootSpeedMod(float mod, bool release)
