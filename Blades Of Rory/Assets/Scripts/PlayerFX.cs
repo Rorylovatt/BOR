@@ -91,7 +91,15 @@ public class PlayerFX : MonoBehaviour
         {
             ampGain = 0;
         }
+        if(playerMovement.maxSpeedReached)
+        {
+            ampGain = 0.5f;
+        }
         
+    }
+    public void CameraShakeDecel(float decelMultiplyer)
+    {
+
     }
     private void CameraFX()
     {

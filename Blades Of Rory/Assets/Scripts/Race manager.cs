@@ -76,6 +76,7 @@ public class Racemanager : MonoBehaviour
         if (!raceStart && Input.GetButtonDown("Jump"))
         {
             countDownStart = true;
+            countDownText.text = "";
         }
         if(countDownStart == true)
         {
@@ -96,7 +97,7 @@ public class Racemanager : MonoBehaviour
             {
                 countDownText.text = "GO!";
             }
-            if(countDownTimer <= 0.5f)
+            if(countDownTimer <= -0.5f)
             {
                 countDownText.text = "";
             }

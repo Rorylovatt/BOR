@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -8,13 +10,14 @@ public class PlayerMovement : MonoBehaviour
     public GameObject leftFoot, rightFoot;
     public Rigidbody playerRb;
     public float maxSpeed, maxFootSpeed, footAcceleration, acceleration, decceleration, explosionForce, rotateSpeed, outOfBoundsSpeedMultiplyer, boostSpeedMultiplyer, speed;
-    public bool boost;
-    private float leftFootSpeed, rightFootSpeed, speedReset, horizontalInput, stepTime, oobSpeed, boostSpeed;
-    private bool deccelBool, maxSpeedReached, left, right, releaseLeft, releaseRight, boostReady, outOfBounds;
+    public bool boost, maxSpeedReached;
+    private float leftFootSpeed, rightFootSpeed, speedReset, horizontalInput, stepTime, oobSpeed, boostSpeed, rubbishSpeed;
+    private bool deccelBool, left, right, releaseLeft, releaseRight, boostReady, outOfBounds;
     private Animator animator;
     public Text perfectText;
-    public Slider leftSlider, rightSlider;
-    public int perfectCounter;
+    public TextMeshProUGUI leftHitText, rightHitText, boostText;
+    //public Slider leftSlider, rightSlider;
+    public int perfectCounter, rubbishCounter;
     Racemanager racemanager;
     // hello
     void Start()
@@ -22,17 +25,19 @@ public class PlayerMovement : MonoBehaviour
         racemanager = FindObjectOfType<Racemanager>();
         animator = GetComponentInChildren<Animator>();
         oobSpeed = maxSpeed / outOfBoundsSpeedMultiplyer;
+        rubbishSpeed = maxSpeed / 4;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(racemanager.raceStart)
+        if (racemanager.raceStart)
         {
             Movement();
 
         }
-        Debugtext();
+        GUIMain();
+        //Debugtext();
     }
     #endregion
 
@@ -93,6 +98,13 @@ public class PlayerMovement : MonoBehaviour
         {
             speed = maxSpeed;
         }
+        if (rubbishCounter >= 2)
+        {
+            if (speed > rubbishSpeed)
+            {
+                speed = rubbishSpeed;
+            }
+        }
         // max speed reached / trip
         if (rightFootSpeed >= maxFootSpeed || leftFootSpeed >= maxFootSpeed)
         {
@@ -109,15 +121,21 @@ public class PlayerMovement : MonoBehaviour
                 maxSpeedReached = false;
                 deccelBool = true;
             }
+            leftHitText.text = "";
+            rightHitText.text = "";
         }
         //boost
-        if(outOfBounds)
+        if (outOfBounds)
         {
             perfectCounter = 0;
         }
         if (perfectCounter >= 3)
         {
             boostReady = true;
+        }
+        if(perfectCounter < 3)
+        {
+            boostReady = false;
         }
         if (boostReady && Input.GetButtonDown("Jump") && !maxSpeedReached)
         {
@@ -126,7 +144,6 @@ public class PlayerMovement : MonoBehaviour
             boost = true;
             boostReady = false;
         }
-
         if (boost)
         {
             animator.SetBool("LeftStep", false);
@@ -163,7 +180,7 @@ public class PlayerMovement : MonoBehaviour
             releaseLeft = true;
             deccelBool = false;
             leftFootSpeed += (footAcceleration / 100) * Time.deltaTime;
-            FootSpeedMod(2f, false, leftFootSpeed);
+            FootSpeedMod(2f, false, leftFootSpeed, leftHitText);
         }
         // Right Foot
         if (Input.GetAxis("Fire1") == 1 && rightFootSpeed < maxFootSpeed && (right || speed == 0) && !maxSpeedReached)
@@ -176,7 +193,7 @@ public class PlayerMovement : MonoBehaviour
             releaseRight = true;
             deccelBool = false;
             rightFootSpeed += (footAcceleration / 100) * Time.deltaTime;
-            FootSpeedMod(2f, false, rightFootSpeed);
+            FootSpeedMod(2f, false, rightFootSpeed, rightHitText);
         }
         // On release buttons
         if (Input.GetAxis("Fire1") == 0 && releaseRight == true)
@@ -184,7 +201,7 @@ public class PlayerMovement : MonoBehaviour
             right = false;
             left = true;
             releaseRight = false;
-            FootSpeedMod(2f, true, rightFootSpeed);
+            FootSpeedMod(2f, true, rightFootSpeed, rightHitText);
             rightFootSpeed = 0;
         }
         if (Input.GetAxis("Fire2") == 0 && releaseLeft == true)
@@ -192,7 +209,7 @@ public class PlayerMovement : MonoBehaviour
             right = true;
             left = false;
             releaseLeft = false;
-            FootSpeedMod(2f, true, leftFootSpeed);
+            FootSpeedMod(2f, true, leftFootSpeed, leftHitText);
             leftFootSpeed = 0;
         }
         // no buttons
@@ -221,35 +238,61 @@ public class PlayerMovement : MonoBehaviour
             footRelease = true;
             deccelBool = false;
             footSpeed += (footAcceleration / 100) * Time.deltaTime;
-            FootSpeedMod(2f, false, footSpeed);
+            //FootSpeedMod(2f, false, footSpeed);
         }
 
     }
-    public void FootSpeedMod(float mod, bool release, float footSpeed)
+    public void FootSpeedMod(float mod, bool release, float footSpeed, TextMeshProUGUI footText)
     {
         // least amount on foot
-        if (footSpeed > maxFootSpeed / 3 && footSpeed < maxFootSpeed / 2)
+        if (footSpeed > 0 && footSpeed < maxFootSpeed / 2)
         {
-            FootModFunc(mod, release, 3f);
-            if (release) perfectCounter = 0;
+            FootModFunc(mod, release, 5f);
+            if (release)
+            {
+                rubbishCounter ++;
+                perfectCounter = 0;
+                footText.text = "Rubbish!";
+                footText.fontSize = 36;
+
+            }
         }
         // low amount on foot
         if (footSpeed > maxFootSpeed / 2 && footSpeed < maxFootSpeed / 1.5f)
         {
             FootModFunc(mod, release, 2f);
-            if (release) perfectCounter = 0;
+            if (release)
+            {
+                rubbishCounter = 0;
+                perfectCounter = 0;
+                footText.text = "OK!";
+                footText.fontSize = 36;
+
+            }
         }
         // medium amount on foot
         if (footSpeed > maxFootSpeed / 1.5f && footSpeed < maxFootSpeed / 1.2f)
         {
             FootModFunc(mod, release, 1.5f);
-            if (release) perfectCounter = 0;
+            if (release)
+            {
+                rubbishCounter = 0;
+                perfectCounter = 0;
+                footText.text = "Good!";
+                footText.fontSize = 36;
+            }
         }
         // perfect amount of time on foot
         if (footSpeed > maxFootSpeed / 1.2f)
         {
             FootModFunc(mod, release, 1.2f);
-            if (release) perfectCounter += 1;
+            if (release)
+            {
+                perfectCounter += 1;
+                footText.text = "Perfect!";
+                footText.fontSize = 36;
+
+            }
         }
     }
     public void FootModFunc(float mod, bool release, float multiplyer)
@@ -265,7 +308,32 @@ public class PlayerMovement : MonoBehaviour
     }
     #endregion
 
-
+    #region GUI
+    public void GUIMain()
+    {
+        TextSize(leftHitText, 0.2f);
+        TextSize(rightHitText, 0.2f);
+        BoostText();
+    }
+    public void TextSize(TextMeshProUGUI text, float decrease)
+    {
+        if(text.fontSize > 0)
+        {
+            text.fontSize -= decrease;
+        }
+    }
+    public void BoostText()
+    {
+        if(perfectCounter >= 3 && !racemanager.raceFinish)
+        {
+            boostText.text = "Boost Ready!";
+        }
+        if(perfectCounter < 3)
+        {
+            boostText.text = "";
+        }
+    }
+    #endregion
 
     #region Collisions
 
@@ -301,23 +369,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
     #endregion
-    public void Debugtext()
-    {
-        //if (!boost)
-        //{
-        //    speedText.text = "Speed : " + speed.ToString();
 
-        //}
-        //else
-        //{
-        //    speedText.text = "Boost! : " + boostSpeed.ToString();
-
-        //}
-        //speedText.text = Input.GetAxis("Fire2").ToString();
-        leftSlider.value = leftFootSpeed / maxFootSpeed;
-        rightSlider.value = rightFootSpeed / maxFootSpeed;
-        perfectText.text = "Perfects : " + perfectCounter.ToString();
-    }
 }
 #region Unused Functions
 //public void FootSpeedMod(float mod, bool release)
@@ -394,6 +446,22 @@ public class PlayerMovement : MonoBehaviour
 //        boost = false;
 //    }
 //}
+//public void Debugtext()
+//{
+//    //if (!boost)
+//    //{
+//    //    speedText.text = "Speed : " + speed.ToString();
 
+//    //}
+//    //else
+//    //{
+//    //    speedText.text = "Boost! : " + boostSpeed.ToString();
+
+//    //}
+//    //speedText.text = Input.GetAxis("Fire2").ToString();
+//    leftSlider.value = leftFootSpeed / maxFootSpeed;
+//    rightSlider.value = rightFootSpeed / maxFootSpeed;
+//    perfectText.text = "Perfects : " + perfectCounter.ToString();
+//}
 
 #endregion
