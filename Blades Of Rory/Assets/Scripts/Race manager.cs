@@ -17,24 +17,29 @@ public class Racemanager : MonoBehaviour
     public bool[] checkPointHit = new bool[4];
     public int laps = 1;
     public Text timerText;
-    public TextMeshProUGUI scoreText, lapText, countDownText;
+    public TextMeshProUGUI scoreText, lapText, countDownText, finalScoreText;
     public GameObject highScoreMenu, inGameGUI;
-    Keyboard keyboard;
+    public Keyboard keyboard;
     //public Camera mainCamera, startCamera, finishCamera;
     public CinemachineVirtualCamera mainCamera, startCamera, finishCamera;
     public AnimationCurve curve;
     public CinemachineBrain cineBrain;
     PlayerLogin playerLogin;
+    public Button playAgain;
+    public GameObject player;
+    public Transform playerTransform;
+    private float timeUntilMenuReset, countDownTimerReset;
 
-    // Start is called before the first frame update
     void Start()
     {
         playerMovement = FindObjectOfType<PlayerMovement>();
-        keyboard = FindObjectOfType<Keyboard>();
+        //keyboard = FindObjectOfType<Keyboard>();
         playerLogin = FindObjectOfType<PlayerLogin>();
+        playAgain.Select();
+        timeUntilMenuReset = timeUntilMenu;
+        countDownTimerReset = countDownTimer;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (!keyboard.loginScreen.activeInHierarchy)
@@ -131,6 +136,10 @@ public class Racemanager : MonoBehaviour
         }
         if (laps == 4)
         {
+            for (int i = 0; i < checkPointHit.Length; i++)
+            {
+                checkPointHit[i] = false;
+            }
             raceFinish = true;
         }
         if (raceFinish)
@@ -144,8 +153,8 @@ public class Racemanager : MonoBehaviour
             else
             {
                 playerLogin.GetLeaderboard();
-
                 highScoreMenu.SetActive(true);
+                finalScoreText.text = "Time : " + score.ToString().Substring(0, score.ToString().Length - 3) + ":" + score.ToString().Substring(score.ToString().Length - 3, 3);
                 // keyboard.active = true; 
             }
         }
@@ -179,5 +188,24 @@ public class Racemanager : MonoBehaviour
         {
             cameraBlendTime = 5f;
         }
+    }
+    public void OnButtonQuit()
+    {
+        Application.Quit();
+    }
+    public void OnButtonRestart()
+    {
+        player.transform.position = playerTransform.position;
+        startCamera.enabled = true;
+        finishCamera.enabled = false;
+        mainCamera.enabled = false;
+        countDownStart = false;
+        raceFinish = false;
+        raceStart = false;
+        laps = 1;
+        timeUntilMenu = timeUntilMenuReset;
+        countDownTimer = countDownTimerReset;
+        highScoreMenu.SetActive(false);
+        score = 0;
     }
 }

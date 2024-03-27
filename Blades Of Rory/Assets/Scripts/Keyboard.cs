@@ -9,11 +9,11 @@ using System;
 
 public class Keyboard : MonoBehaviour
 {
-    public TextMeshProUGUI nameText, scoreText, emailText, passwordText;
-    public TMP_InputField emailInput, passwordInput;
+    public TextMeshProUGUI nameText, scoreText, emailText, passwordText, displayNameText;
+    public TMP_InputField emailInput, passwordInput, displayNameInput;
     public int score;
     public Button selectFirst;
-    public bool active, email, password, entered;
+    public bool active, email, password, displayName, entered;
     public GameObject loginScreen;
     // Start is called before the first frame update
     void Start()
@@ -32,17 +32,25 @@ public class Keyboard : MonoBehaviour
                 scoreText.text = "Time : " + score.ToString().Substring(0, score.ToString().Length - 3) + "." + score.ToString().Substring(score.ToString().Length - 3, 3);
             }
         }
-        if(loginScreen.activeInHierarchy)
+        if (loginScreen.activeInHierarchy)
         {
             if (email)
             {
                 emailInput.image.color = new Color(0, 0.85f, 1f);
                 passwordInput.image.color = Color.white;
+                displayNameInput.image.color = Color.white;
             }
-            if (!email)
+            if (password)
             {
                 emailInput.image.color = Color.white;
                 passwordInput.image.color = new Color(0, 0.85f, 1f);
+                displayNameInput.image.color = Color.white;
+            }
+            if (displayName)
+            {
+                emailInput.image.color = Color.white;
+                passwordInput.image.color = Color.white;
+                displayNameInput.image.color = new Color(0, 0.85f, 1f);
             }
         }
     }
@@ -57,13 +65,17 @@ public class Keyboard : MonoBehaviour
         }
         if (loginScreen.activeInHierarchy)
         {
-            if(email)
+            if (email)
             {
                 emailInput.text += EventSystem.current.currentSelectedGameObject.name.ToString().ToLower();
             }
-            if(!email)
+            if (password)
             {
                 passwordInput.text += EventSystem.current.currentSelectedGameObject.name.ToString();
+            }
+            if (displayName)
+            {
+                displayNameInput.text += EventSystem.current.currentSelectedGameObject.name.ToString();
             }
         }
     }
@@ -80,18 +92,26 @@ public class Keyboard : MonoBehaviour
         {
             if (email)
             {
-                if(emailInput.text.Length > 0)
+                if (emailInput.text.Length > 0)
                 {
                     emailInput.text = emailInput.text.Substring(0, emailInput.text.Length - 1);
                 }
             }
-            if (!email)
+            if (password)
             {
                 if (passwordInput.text.Length > 0)
                 {
                     passwordInput.text = passwordInput.text.Substring(0, passwordInput.text.Length - 1);
                 }
             }
+            if (displayName)
+            {
+                if (displayNameInput.text.Length > 0)
+                {
+                    displayNameInput.text = displayNameInput.text.Substring(0, displayNameInput.text.Length - 1);
+                }
+            }
+
         }
     }
     public void OnEnterEmailPassword()
@@ -101,15 +121,17 @@ public class Keyboard : MonoBehaviour
             email = false;
             password = true;
         }
-        if(password)
+        if (password)
         {
             entered = true;
+            password = false;
+            displayName = true;
         }
 
     }
     public void OnBack()
     {
-        if(!email)
+        if (!email)
         {
             email = true;
         }
