@@ -31,7 +31,7 @@ public class PlayerLogin : MonoBehaviour
         testPassword = "REW123";
         //keyboard = FindAnyObjectByType<Keyboard>();
         emailInput.text = testEmail;
-        passwordInput.text = testPassword;
+      // passwordInput.text = testPassword;
     }
     private void Update()
     {
@@ -40,14 +40,14 @@ public class PlayerLogin : MonoBehaviour
             if (!emailSwap)
             {
                 testEmail = "rorylovatt@hotmail.co.uk";
-                emailInput.text = testEmail;
+                //emailInput.text = testEmail;
 
 
             }
             if (emailSwap)
             {
                 testEmail = "21440992@stu.mmu.ac.uk";
-                emailInput.text = testEmail;
+                //emailInput.text = testEmail;
 
 
             }
@@ -128,7 +128,7 @@ public class PlayerLogin : MonoBehaviour
 
     void OnError(PlayFabError error)
     {
-        if (keyboard.entered)
+        if (keyboard.entered && keyboard.displayName)
         {
             text.text = error.ErrorMessage;
         }
@@ -144,6 +144,7 @@ public class PlayerLogin : MonoBehaviour
         createAccount = false;
         inputMenu.SetActive(true);
         buttons.SetActive(false);
+        keyboard.selectFirst.Select();
     }
     public void OnButtonCreateAccount()
     {
@@ -151,6 +152,8 @@ public class PlayerLogin : MonoBehaviour
         login = false;
         inputMenu.SetActive(true);
         buttons.SetActive(false);
+        keyboard.selectFirst.Select();
+
     }
     public void EnterButton()
     {

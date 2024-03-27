@@ -212,6 +212,7 @@ public class Racemanager : MonoBehaviour
     public void OnButtonRestart()
     {
         player.transform.position = playerTransform.position;
+        player.transform.rotation = playerTransform.rotation;   
         startCamera.enabled = true;
         finishCamera.enabled = false;
         mainCamera.enabled = false;

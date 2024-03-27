@@ -15,6 +15,7 @@ public class Keyboard : MonoBehaviour
     public Button selectFirst;
     public bool active, email, password, displayName, entered;
     public GameObject loginScreen;
+    public PlayerLogin playerLogin;
     // Start is called before the first frame update
     void Start()
     {
@@ -131,9 +132,16 @@ public class Keyboard : MonoBehaviour
     }
     public void OnBack()
     {
-        if (!email)
+        if (password)
         {
             email = true;
+            password = false;
+        }
+        if(email)
+        {
+            playerLogin.buttons.SetActive(true);
+            playerLogin.inputMenu.SetActive(false);
+            playerLogin.selectFirst.Select();
         }
     }
 }

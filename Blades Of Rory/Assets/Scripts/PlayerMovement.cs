@@ -7,18 +7,19 @@ public class PlayerMovement : MonoBehaviour
 {
     #region Variables Start Update
     // Start is called before the first frame update
-    public GameObject leftFoot, rightFoot;
+    public GameObject leftFoot, rightFoot, pauseMenu;
     public Rigidbody playerRb;
     public float maxSpeed, maxFootSpeed, footAcceleration, acceleration, decceleration, explosionForce, rotateSpeed, outOfBoundsSpeedMultiplyer, boostSpeedMultiplyer, speed;
     public bool boost, maxSpeedReached;
     private float leftFootSpeed, rightFootSpeed, speedReset, horizontalInput, stepTime, oobSpeed, boostSpeed, rubbishSpeed;
-    private bool deccelBool, left, right, releaseLeft, releaseRight, boostReady, outOfBounds;
+    private bool deccelBool, left, right, releaseLeft, releaseRight, boostReady, outOfBounds, pause;
     public Animator animator;
     public Text perfectText;
     public TextMeshProUGUI leftHitText, rightHitText, boostText;
     //public Slider leftSlider, rightSlider;
     public int perfectCounter, rubbishCounter;
     Racemanager racemanager;
+    public Button firstButton;
     // hello
     void Start()
     {
@@ -37,6 +38,24 @@ public class PlayerMovement : MonoBehaviour
 
         }
         GUIMain();
+        if(racemanager.raceStart)
+        {
+            if (Input.GetButtonDown("Fire3") && !pause)
+            {
+                Time.timeScale = 0;
+                pause = true;
+                pauseMenu.SetActive(true);
+                firstButton.Select();
+            }
+            else if (Input.GetButtonDown("Fire3") && pause)
+            {
+                Time.timeScale = 1;
+                pause = false;
+                pauseMenu.SetActive(false);
+
+            }
+        }
+
         //Debugtext();
     }
     #endregion
@@ -165,6 +184,12 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
     #region Controls
+    public void OnPauseButton()
+    {
+        Time.timeScale = 1;
+        pause = false;
+        pauseMenu.SetActive(false);
+    }
     public void Controls()
     {
         //ButtonPress("Fire2", "LeftStep", "RightStep", leftFootSpeed, left, releaseLeft);
