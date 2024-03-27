@@ -10835,7 +10835,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1055945350}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1265091792}
+        m_TargetAssemblyTypeName: Racemanager, Assembly-CSharp
+        m_MethodName: OnButtonQuit
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1055945350
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11943,6 +11955,7 @@ MonoBehaviour:
   speed: 0
   boost: 0
   maxSpeedReached: 0
+  animator: {fileID: 0}
   perfectText: {fileID: 560919364}
   leftHitText: {fileID: 1569469249}
   rightHitText: {fileID: 650372461}
@@ -12109,7 +12122,7 @@ MonoBehaviour:
   m_CaretColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_CustomCaretColor: 0
   m_SelectionColor: {r: 0.65882355, g: 0.80784315, b: 1, a: 0.7529412}
-  m_Text: User Name
+  m_Text: 
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
@@ -19044,10 +19057,13 @@ MonoBehaviour:
   raceFinish: 0
   raceStart: 0
   isWorking: 0
+  resetBool: 0
+  buttonSelect: 0
   timeElapsed: 0
   timeUntilMenu: 5
   cameraBlendTime: 0
   countDownTimer: 5
+  resetTimer: 5
   score: 0
   checkPoints:
   - {fileID: 1172403210}
@@ -19602,7 +19618,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -234, y: 23}
+  m_AnchoredPosition: {x: -377, y: 69}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1330228767
@@ -19659,7 +19675,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -19785,7 +19801,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1336155079}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1265091792}
+        m_TargetAssemblyTypeName: Racemanager, Assembly-CSharp
+        m_MethodName: OnButtonRestart
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1336155079
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22384,7 +22412,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: {fileID: 323542101}
-  finalScore: {fileID: 0}
   emailInput: {fileID: 148739113}
   passwordInput: {fileID: 947840934}
   nameInput: {fileID: 1143777886}
@@ -24458,8 +24485,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1687258581}
-  m_LocalRotation: {x: 0.06452891, y: 0.9291325, z: -0.12640329, w: 0.34142503}
-  m_LocalPosition: {x: -3.7200003, y: 0.46000004, z: 5.1899986}
+  m_LocalRotation: {x: 0.23734125, y: 0.0026301648, z: 0.0038256487, w: 0.9714153}
+  m_LocalPosition: {x: -0.010000229, y: 8.31, z: -17.43}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -38767,7 +38794,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Email adress
+  m_text: User Name
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

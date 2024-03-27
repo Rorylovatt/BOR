@@ -13,7 +13,7 @@ public class PlayerMovement : MonoBehaviour
     public bool boost, maxSpeedReached;
     private float leftFootSpeed, rightFootSpeed, speedReset, horizontalInput, stepTime, oobSpeed, boostSpeed, rubbishSpeed;
     private bool deccelBool, left, right, releaseLeft, releaseRight, boostReady, outOfBounds;
-    private Animator animator;
+    public Animator animator;
     public Text perfectText;
     public TextMeshProUGUI leftHitText, rightHitText, boostText;
     //public Slider leftSlider, rightSlider;

@@ -10,7 +10,7 @@ using UnityEngine.Rendering;
 
 public class PlayerLogin : MonoBehaviour
 {
-    public TextMeshProUGUI text, finalScore;
+    public TextMeshProUGUI text;
     //public InputField 
     public TMP_InputField emailInput, passwordInput, nameInput;
     public Keyboard keyboard;
@@ -37,14 +37,14 @@ public class PlayerLogin : MonoBehaviour
     {
         if(login)
         {
-            if (emailSwap)
+            if (!emailSwap)
             {
                 testEmail = "rorylovatt@hotmail.co.uk";
                 emailInput.text = testEmail;
 
 
             }
-            if (!emailSwap)
+            if (emailSwap)
             {
                 testEmail = "21440992@stu.mmu.ac.uk";
                 emailInput.text = testEmail;

@@ -10,8 +10,8 @@ public class Racemanager : MonoBehaviour
 {
     PlayerMovement playerMovement;
     private bool countDownStart;
-    public bool raceFinish, raceStart, isWorking;
-    public float timeElapsed, timeUntilMenu, cameraBlendTime, countDownTimer;
+    public bool raceFinish, raceStart, isWorking, resetBool, buttonSelect;
+    public float timeElapsed, timeUntilMenu, cameraBlendTime, countDownTimer, resetTimer;
     public int score;
     public GameObject[] checkPoints = new GameObject[4];
     public bool[] checkPointHit = new bool[4];
@@ -28,7 +28,7 @@ public class Racemanager : MonoBehaviour
     public Button playAgain;
     public GameObject player;
     public Transform playerTransform;
-    private float timeUntilMenuReset, countDownTimerReset;
+    private float timeUntilMenuReset, countDownTimerReset, resetTimerReset;
 
     void Start()
     {
@@ -38,6 +38,7 @@ public class Racemanager : MonoBehaviour
         playAgain.Select();
         timeUntilMenuReset = timeUntilMenu;
         countDownTimerReset = countDownTimer;
+        resetTimerReset = resetTimer;
     }
 
     void Update()
@@ -50,6 +51,16 @@ public class Racemanager : MonoBehaviour
             UpdateGUI();
             CameraControl();
             score = (int)(timeElapsed * 1000f);
+            if(resetBool)
+            {
+                resetTimer -=Time.deltaTime;
+                if(resetTimer < 0)
+                {
+                    resetBool = false;
+                    resetTimer = resetTimerReset;
+                    countDownText.text = "Press 'A' To Start";
+                }
+            }
         }
     }
     public void UpdateGUI()
@@ -76,7 +87,7 @@ public class Racemanager : MonoBehaviour
             {
                 scoreText.text = "Time : 0.0" + score.ToString();
             }
-            else if (score > 0)
+            else if (score >= 0)
             {
                 scoreText.text = "Time : 0.00" + score.ToString();
             }
@@ -84,7 +95,7 @@ public class Racemanager : MonoBehaviour
     }
     public void RaceCondition()
     {
-        if (!raceStart && Input.GetButtonDown("Jump"))
+        if (!raceStart && Input.GetButtonDown("Jump") && !resetBool)
         {
             countDownStart = true;
             countDownText.text = "";
@@ -157,6 +168,11 @@ public class Racemanager : MonoBehaviour
                 finalScoreText.text = "Time : " + score.ToString().Substring(0, score.ToString().Length - 3) + ":" + score.ToString().Substring(score.ToString().Length - 3, 3);
                 // keyboard.active = true; 
             }
+            if(!buttonSelect)
+            {
+                playAgain.Select();
+                buttonSelect = true;
+            }
         }
     }
     public void CameraControl()
@@ -206,6 +222,10 @@ public class Racemanager : MonoBehaviour
         timeUntilMenu = timeUntilMenuReset;
         countDownTimer = countDownTimerReset;
         highScoreMenu.SetActive(false);
-        score = 0;
+        timeElapsed = 0;
+        playerMovement.animator.SetBool("Win", false);
+        scoreText.text = "Time : 0.000";
+        resetBool = true;
+        buttonSelect = false;
     }
 }
