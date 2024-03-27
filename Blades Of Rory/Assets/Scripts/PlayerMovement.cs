@@ -110,6 +110,8 @@ public class PlayerMovement : MonoBehaviour
         {
             maxSpeedReached = true;
             animator.SetBool("Trip", true);
+            leftHitText.text = "";
+            rightHitText.text = "";
         }
         if (maxSpeedReached)
         {
@@ -121,8 +123,7 @@ public class PlayerMovement : MonoBehaviour
                 maxSpeedReached = false;
                 deccelBool = true;
             }
-            leftHitText.text = "";
-            rightHitText.text = "";
+
         }
         //boost
         if (outOfBounds)
@@ -283,7 +284,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
         // perfect amount of time on foot
-        if (footSpeed > maxFootSpeed / 1.2f)
+        if (footSpeed > maxFootSpeed / 1.2f && footSpeed <= maxFootSpeed)
         {
             FootModFunc(mod, release, 1.2f);
             if (release)
