@@ -59,7 +59,7 @@ public class Keyboard : MonoBehaviour
         {
             if(email)
             {
-                emailInput.text += EventSystem.current.currentSelectedGameObject.name.ToString();
+                emailInput.text += EventSystem.current.currentSelectedGameObject.name.ToString().ToLower();
             }
             if(!email)
             {
@@ -99,8 +99,9 @@ public class Keyboard : MonoBehaviour
         if (email)
         {
             email = false;
+            password = true;
         }
-        if(!email)
+        if(password)
         {
             entered = true;
         }
@@ -114,3 +115,7 @@ public class Keyboard : MonoBehaviour
         }
     }
 }
+/*
+ rorylovatt@hotmail.co.uk
+ REW123
+ */

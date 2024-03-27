@@ -18,18 +18,20 @@ public class Racemanager : MonoBehaviour
     public int laps = 1;
     public Text timerText;
     public TextMeshProUGUI scoreText, lapText, countDownText;
-    public GameObject highScoreMenu;
+    public GameObject highScoreMenu, inGameGUI;
     Keyboard keyboard;
     //public Camera mainCamera, startCamera, finishCamera;
     public CinemachineVirtualCamera mainCamera, startCamera, finishCamera;
     public AnimationCurve curve;
     public CinemachineBrain cineBrain;
+    PlayerLogin playerLogin;
 
     // Start is called before the first frame update
     void Start()
     {
         playerMovement = FindObjectOfType<PlayerMovement>();
         keyboard = FindObjectOfType<Keyboard>();
+        playerLogin = FindObjectOfType<PlayerLogin>();
     }
 
     // Update is called once per frame
@@ -37,6 +39,7 @@ public class Racemanager : MonoBehaviour
     {
         if (!keyboard.loginScreen.activeInHierarchy)
         {
+            inGameGUI.SetActive(true);
             RaceCondition();
             UpdateGUI();
             CameraControl();
@@ -131,16 +134,19 @@ public class Racemanager : MonoBehaviour
         }
         if (raceFinish)
         {
+            playerLogin.SendLeaderboard(-score);
+            playerLogin.GetLeaderboard();
             if (timeUntilMenu > 0)
             {
                 timeUntilMenu -= Time.deltaTime;
 
             }
-            else
-            {
-                highScoreMenu.SetActive(true);
-                // keyboard.active = true; 
-            }
+            //else
+            //{
+            //    playerLogin.SendLeaderboard(score);
+            //    //highScoreMenu.SetActive(true);
+            //    // keyboard.active = true; 
+            //}
         }
     }
     public void CameraControl()
