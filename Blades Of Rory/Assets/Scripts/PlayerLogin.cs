@@ -15,6 +15,12 @@ public class PlayerLogin : MonoBehaviour
     Keyboard keyboard;
     public string testEmail, testPassword;
     public bool emailSwap;
+
+    [SerializeField]
+    private List<TextMeshProUGUI> names;
+
+    [SerializeField]
+    private List<TextMeshProUGUI> scores;
     private void Start()
     {
         testPassword = "REW123";
@@ -118,9 +124,13 @@ public class PlayerLogin : MonoBehaviour
     }
     void OnLeaderboardGet(GetLeaderboardResult result)
     {
+        
         foreach(var item in result.Leaderboard)
         {
-            Debug.Log(item.Position + " " + item.PlayFabId + " " + item.StatValue);
+            names[item.Position].text = item.PlayFabId;
+            scores[item.Position].text = item.StatValue.ToString().Substring(1, item.StatValue.ToString().Length - 4 ) 
+                + ":" + item.StatValue.ToString().Substring(item.StatValue.ToString().Length - 3, 3);
+
         }
     }
 }

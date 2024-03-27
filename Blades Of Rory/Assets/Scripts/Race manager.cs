@@ -10,7 +10,7 @@ public class Racemanager : MonoBehaviour
 {
     PlayerMovement playerMovement;
     private bool countDownStart;
-    public bool raceFinish, raceStart;
+    public bool raceFinish, raceStart, isWorking;
     public float timeElapsed, timeUntilMenu, cameraBlendTime, countDownTimer;
     public int score;
     public GameObject[] checkPoints = new GameObject[4];
@@ -39,6 +39,7 @@ public class Racemanager : MonoBehaviour
     {
         if (!keyboard.loginScreen.activeInHierarchy)
         {
+            isWorking = true;
             inGameGUI.SetActive(true);
             RaceCondition();
             UpdateGUI();
@@ -135,18 +136,18 @@ public class Racemanager : MonoBehaviour
         if (raceFinish)
         {
             playerLogin.SendLeaderboard(-score);
-            playerLogin.GetLeaderboard();
             if (timeUntilMenu > 0)
             {
                 timeUntilMenu -= Time.deltaTime;
 
             }
-            //else
-            //{
-            //    playerLogin.SendLeaderboard(score);
-            //    //highScoreMenu.SetActive(true);
-            //    // keyboard.active = true; 
-            //}
+            else
+            {
+                playerLogin.GetLeaderboard();
+
+                highScoreMenu.SetActive(true);
+                // keyboard.active = true; 
+            }
         }
     }
     public void CameraControl()
