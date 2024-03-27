@@ -35,11 +35,13 @@ public class Racemanager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        RaceCondition();
-        UpdateGUI();
-        CameraControl();
-        score = (int)(timeElapsed * 1000f);
-
+        if (!keyboard.loginScreen.activeInHierarchy)
+        {
+            RaceCondition();
+            UpdateGUI();
+            CameraControl();
+            score = (int)(timeElapsed * 1000f);
+        }
     }
     public void UpdateGUI()
     {
