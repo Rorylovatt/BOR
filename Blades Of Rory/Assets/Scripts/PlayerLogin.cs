@@ -6,8 +6,8 @@ using PlayFab.ClientModels;
 //using Newtonsoft.Json;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.Rendering;
-using UnityEditor.PackageManager.Requests;
+//using UnityEngine.Rendering;
+//using UnityEditor.PackageManager.Requests;
 
 public class PlayerLogin : MonoBehaviour
 {
@@ -36,7 +36,7 @@ public class PlayerLogin : MonoBehaviour
         testPassword = "REW123";
         //keyboard = FindAnyObjectByType<Keyboard>();
         emailInput.text = testEmail;
-        passwordInput.text = testPassword;
+        //passwordInput.text = testPassword;
         racemanager = FindAnyObjectByType<Racemanager>();
     }
     private void Update()
@@ -46,14 +46,14 @@ public class PlayerLogin : MonoBehaviour
             if (!emailSwap)
             {
                 testEmail = "werrtttyy@hotmail.co.uk";
-                emailInput.text = testEmail;
+               // emailInput.text = testEmail;
 
 
             }
             if (emailSwap)
             {
                 testEmail = "21440992@stu.mmu.ac.uk";
-                emailInput.text = testEmail;
+                //emailInput.text = testEmail;
 
 
             }
