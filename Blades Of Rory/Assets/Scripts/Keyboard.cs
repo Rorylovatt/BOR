@@ -137,7 +137,7 @@ public class Keyboard : MonoBehaviour
             email = true;
             password = false;
         }
-        if(email)
+        else if(email)
         {
             playerLogin.buttons.SetActive(true);
             playerLogin.inputMenu.SetActive(false);

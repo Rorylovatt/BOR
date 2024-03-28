@@ -7,16 +7,21 @@ using PlayFab.ClientModels;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Rendering;
+using UnityEditor.PackageManager.Requests;
 
 public class PlayerLogin : MonoBehaviour
 {
     public TextMeshProUGUI text;
+    public GameObject inputFieldsFirst;
     //public InputField 
     public TMP_InputField emailInput, passwordInput, nameInput;
     public Keyboard keyboard;
     public string testEmail, testPassword;
     public bool emailSwap, login, createAccount;
     public Button selectFirst;
+    public string usernameToDisplay;
+    Racemanager racemanager;
+    public int currentHighScore, currentRank;
 
     public GameObject inputMenu, buttons;
 
@@ -31,23 +36,24 @@ public class PlayerLogin : MonoBehaviour
         testPassword = "REW123";
         //keyboard = FindAnyObjectByType<Keyboard>();
         emailInput.text = testEmail;
-      // passwordInput.text = testPassword;
+        passwordInput.text = testPassword;
+        racemanager = FindAnyObjectByType<Racemanager>();
     }
     private void Update()
     {
-        if(login)
+        if (login)
         {
             if (!emailSwap)
             {
-                testEmail = "rorylovatt@hotmail.co.uk";
-                //emailInput.text = testEmail;
+                testEmail = "werrtttyy@hotmail.co.uk";
+                emailInput.text = testEmail;
 
 
             }
             if (emailSwap)
             {
                 testEmail = "21440992@stu.mmu.ac.uk";
-                //emailInput.text = testEmail;
+                emailInput.text = testEmail;
 
 
             }
@@ -61,25 +67,27 @@ public class PlayerLogin : MonoBehaviour
         var request = new LoginWithEmailAddressRequest
         {
             Email = emailInput.text,
-            Password = passwordInput.text
+            Password = passwordInput.text,
+            InfoRequestParameters = new GetPlayerCombinedInfoRequestParams
+            {
+                GetPlayerProfile = true
+            }
+            
         };
         PlayFabClientAPI.LoginWithEmailAddress(request, OnLoginSuccess, OnError);
 
     }
     public void OnLoginSuccess(LoginResult result)
     {
+        usernameToDisplay = null;
         text.text = "Login Success!";
+        if(result.InfoResultPayload.PlayerProfile != null)
+        {
+            usernameToDisplay = result.InfoResultPayload.PlayerProfile.DisplayName;
+
+        }
         keyboard.loginScreen.SetActive(false);
-        //string name = null;
-        //if (result.InfoResultPayload.PlayerProfile != null)
-        //{
-        //    name = result.InfoResultPayload.PlayerProfile.DisplayName;
-        //}
-        //emailInput.gameObject.SetActive(false);
-        //passwordInput.gameObject.SetActive(false);
-        //nameInput.gameObject.SetActive(true);
-        //keyboard.displayName = true;
-        //keyboard.password = false;
+        GetLeaderboardAroundPlayer();
     }
     #endregion
     #region CreateAccount
@@ -102,8 +110,7 @@ public class PlayerLogin : MonoBehaviour
         if (keyboard.entered)
         {
             text.text = "Success!";
-            emailInput.gameObject.SetActive(false);
-            passwordInput.gameObject.SetActive(false);
+            inputFieldsFirst.SetActive(false);
             nameInput.gameObject.SetActive(true);
             keyboard.displayName = true;
             keyboard.password = false;
@@ -120,6 +127,7 @@ public class PlayerLogin : MonoBehaviour
     }
     void OnDisplayNameUpdate(UpdateUserTitleDisplayNameResult result)
     {
+        usernameToDisplay = nameInput.text;
         keyboard.loginScreen.SetActive(false);
     }
     #endregion
@@ -128,9 +136,14 @@ public class PlayerLogin : MonoBehaviour
 
     void OnError(PlayFabError error)
     {
-        if (keyboard.entered && keyboard.displayName)
+        if (keyboard.entered && keyboard.displayName || keyboard.entered && keyboard.password)
         {
-            text.text = error.ErrorMessage;
+            text.text = error.ErrorMessage.ToUpper();
+            if (passwordInput.text.Length < 6)
+            {
+                text.text = "PASSWORD MUST CONTAIN 6 CHARACTERS OR MORE!";
+            }
+
         }
     }
 
@@ -174,7 +187,7 @@ public class PlayerLogin : MonoBehaviour
         {
             RegisterButton();
         }
-        if(createAccount && keyboard.displayName)
+        if (createAccount && keyboard.displayName)
         {
             SubmitName();
         }
@@ -224,6 +237,28 @@ public class PlayerLogin : MonoBehaviour
             scores[item.Position].text = item.StatValue.ToString().Substring(1, item.StatValue.ToString().Length - 4)
                 + ":" + item.StatValue.ToString().Substring(item.StatValue.ToString().Length - 3, 3);
 
+            if(usernameToDisplay == item.DisplayName)
+            {
+                racemanager.beatHighScore = true;
+            }
+
+        }
+    }
+    public void GetLeaderboardAroundPlayer()
+    {
+        var request = new GetLeaderboardAroundPlayerRequest {
+            StatisticName = "High Score",
+            MaxResultsCount = 1
+        };
+        PlayFabClientAPI.GetLeaderboardAroundPlayer(request, OnLeaderboardAroundPlayerGet, OnError);
+    
+    }
+    void OnLeaderboardAroundPlayerGet(GetLeaderboardAroundPlayerResult result)
+    {
+        foreach (var item in result.Leaderboard)
+        {
+            currentHighScore = -item.StatValue;
+            currentRank = item.Position + 1;
         }
     }
     #endregion

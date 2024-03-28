@@ -9,8 +9,8 @@ using Cinemachine;
 public class Racemanager : MonoBehaviour
 {
     PlayerMovement playerMovement;
-    private bool countDownStart;
-    public bool raceFinish, raceStart, isWorking, resetBool, buttonSelect;
+    private bool countDownStart, firstRaceBool;
+    public bool raceFinish, raceStart, isWorking, resetBool, buttonSelect, beatHighScore, highScoreUpdate;
     public float timeElapsed, timeUntilMenu, cameraBlendTime, countDownTimer, resetTimer;
     public int score;
     public GameObject[] checkPoints = new GameObject[4];
@@ -39,6 +39,7 @@ public class Racemanager : MonoBehaviour
         timeUntilMenuReset = timeUntilMenu;
         countDownTimerReset = countDownTimer;
         resetTimerReset = resetTimer;
+        firstRaceBool = true;
     }
 
     void Update()
@@ -58,7 +59,7 @@ public class Racemanager : MonoBehaviour
                 {
                     resetBool = false;
                     resetTimer = resetTimerReset;
-                    countDownText.text = "Press 'A' To Start";
+                    countDownText.text = "CAN YOU DO ANY BETTER " + playerLogin.usernameToDisplay + "?\nPRESS 'A' TO START";
                 }
             }
         }
@@ -95,8 +96,14 @@ public class Racemanager : MonoBehaviour
     }
     public void RaceCondition()
     {
+        if (!raceStart && !countDownStart && !resetBool && firstRaceBool)
+        {
+            countDownText.text = "wELCOME " + playerLogin.usernameToDisplay + "\nPRESS 'A' TO START";
+
+        }
         if (!raceStart && Input.GetButtonDown("Jump") && !resetBool)
         {
+            firstRaceBool = false;
             countDownStart = true;
             countDownText.text = "";
         }
@@ -155,7 +162,17 @@ public class Racemanager : MonoBehaviour
         }
         if (raceFinish)
         {
+            inGameGUI.SetActive(false);
             playerLogin.SendLeaderboard(-score);
+            if(playerLogin.currentHighScore > score)
+            {
+                playerLogin.GetLeaderboardAroundPlayer();
+                highScoreUpdate = true;
+            }
+            if(playerLogin.currentHighScore < score)
+            {
+                highScoreUpdate = false;
+            }
             if (timeUntilMenu > 0)
             {
                 timeUntilMenu -= Time.deltaTime;
@@ -165,7 +182,21 @@ public class Racemanager : MonoBehaviour
             {
                 playerLogin.GetLeaderboard();
                 highScoreMenu.SetActive(true);
-                finalScoreText.text = "Time : " + score.ToString().Substring(0, score.ToString().Length - 3) + ":" + score.ToString().Substring(score.ToString().Length - 3, 3);
+                if(highScoreUpdate)
+                {
+                    finalScoreText.text = "YOU BEAT YOUR BEST TIME!!" +
+                        "\nTime : " + score.ToString().Substring(0, score.ToString().Length - 3) + ":" + score.ToString().Substring(score.ToString().Length - 3, 3)
+                        + "\nCURRENT RANK : " + playerLogin.currentRank.ToString();
+
+                }
+                if(!highScoreUpdate)
+                {
+                    finalScoreText.text = "YOU DIDN'T BEAT YOUR BEST TIME" +
+                         "\nTime : " + score.ToString().Substring(0, score.ToString().Length - 3) + ":" + score.ToString().Substring(score.ToString().Length - 3, 3)
+                        + "\nBest Time : " + playerLogin.currentHighScore.ToString().Substring(0, playerLogin.currentHighScore.ToString().Length - 3) +
+                        ":" + playerLogin.currentHighScore.ToString().Substring(playerLogin.currentHighScore.ToString().Length - 3, 3)
+                        + "\nCURRENT RANK : " + playerLogin.currentRank.ToString();
+                }
                 // keyboard.active = true; 
             }
             if(!buttonSelect)
@@ -211,6 +242,7 @@ public class Racemanager : MonoBehaviour
     }
     public void OnButtonRestart()
     {
+        inGameGUI.SetActive(true);
         player.transform.position = playerTransform.position;
         player.transform.rotation = playerTransform.rotation;   
         startCamera.enabled = true;
