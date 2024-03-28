@@ -164,7 +164,9 @@ public class Racemanager : MonoBehaviour
         {
             inGameGUI.SetActive(false);
             playerLogin.SendLeaderboard(-score);
-            if(playerLogin.currentHighScore > score)
+            //playerLogin.GetLeaderboard();
+
+            if (playerLogin.currentHighScore > score)
             {
                 playerLogin.GetLeaderboardAroundPlayer();
                 highScoreUpdate = true;
@@ -180,10 +182,11 @@ public class Racemanager : MonoBehaviour
             }
             else
             {
-                playerLogin.GetLeaderboard();
                 highScoreMenu.SetActive(true);
                 if(highScoreUpdate)
                 {
+                    playerLogin.GetLeaderboard();
+
                     finalScoreText.text = "YOU BEAT YOUR BEST TIME!!" +
                         "\nTime : " + score.ToString().Substring(0, score.ToString().Length - 3) + ":" + score.ToString().Substring(score.ToString().Length - 3, 3)
                         + "\nCURRENT RANK : " + playerLogin.currentRank.ToString();
@@ -191,6 +194,8 @@ public class Racemanager : MonoBehaviour
                 }
                 if(!highScoreUpdate)
                 {
+                    playerLogin.GetLeaderboard();
+
                     finalScoreText.text = "YOU DIDN'T BEAT YOUR BEST TIME" +
                          "\nTime : " + score.ToString().Substring(0, score.ToString().Length - 3) + ":" + score.ToString().Substring(score.ToString().Length - 3, 3)
                         + "\nBest Time : " + playerLogin.currentHighScore.ToString().Substring(0, playerLogin.currentHighScore.ToString().Length - 3) +

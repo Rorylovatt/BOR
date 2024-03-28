@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.InputSystem;
 
 
 public class PlayerMovement : MonoBehaviour
@@ -20,6 +21,7 @@ public class PlayerMovement : MonoBehaviour
     public int perfectCounter, rubbishCounter;
     Racemanager racemanager;
     public Button firstButton;
+    public PlayerInput playerInput;
     // hello
     void Start()
     {

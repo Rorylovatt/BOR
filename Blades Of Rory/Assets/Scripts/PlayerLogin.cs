@@ -233,7 +233,7 @@ public class PlayerLogin : MonoBehaviour
 
         foreach (var item in result.Leaderboard)
         {
-            names[item.Position].text = item.DisplayName;
+            names[item.Position].text = (item.Position + 1).ToString() + " : " + item.DisplayName;
             scores[item.Position].text = item.StatValue.ToString().Substring(1, item.StatValue.ToString().Length - 4)
                 + ":" + item.StatValue.ToString().Substring(item.StatValue.ToString().Length - 3, 3);
 
