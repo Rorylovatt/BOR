@@ -12166,7 +12166,7 @@ MonoBehaviour:
   perfectCounter: 0
   rubbishCounter: 0
   firstButton: {fileID: 1776905150}
-  playerInput: {fileID: 0}
+  playerInput: {fileID: 1139047559}
 --- !u!114 &1139047558
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12216,7 +12216,7 @@ MonoBehaviour:
       m_Calls: []
   m_ActionEvents: []
   m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
+  m_DefaultControlScheme: Gamepad
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}

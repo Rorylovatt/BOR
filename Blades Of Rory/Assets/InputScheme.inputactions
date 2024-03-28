@@ -21,7 +21,7 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 },
                 {
                     "name": "RightFoot",
@@ -30,7 +30,7 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Pause",
@@ -48,6 +48,24 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "LeftFootRelease",
+                    "type": "Button",
+                    "id": "07d5dff3-f278-4682-ba53-8f68fe86df82",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=1)",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "RightFootRelease",
+                    "type": "Button",
+                    "id": "9ecb1b13-2c96-4238-9124-43af1cf7c8c4",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=1)",
                     "initialStateCheck": false
                 }
             ],
@@ -225,6 +243,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Boost",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e985c3a5-4155-4130-b4bf-36fb6388201d",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "Press(behavior=1)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LeftFootRelease",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a15bf353-bcf6-4063-ad5a-7428258ff5cf",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RightFootRelease",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

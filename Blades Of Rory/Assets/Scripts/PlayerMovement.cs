@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.InputSystem;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 
 
 public class PlayerMovement : MonoBehaviour
@@ -13,7 +14,7 @@ public class PlayerMovement : MonoBehaviour
     public float maxSpeed, maxFootSpeed, footAcceleration, acceleration, decceleration, explosionForce, rotateSpeed, outOfBoundsSpeedMultiplyer, boostSpeedMultiplyer, speed;
     public bool boost, maxSpeedReached;
     private float leftFootSpeed, rightFootSpeed, speedReset, horizontalInput, stepTime, oobSpeed, boostSpeed, rubbishSpeed;
-    private bool deccelBool, left, right, releaseLeft, releaseRight, boostReady, outOfBounds, pause;
+    private bool deccelBool, left, right, releaseLeft, releaseRight, boostReady, outOfBounds, pause, leftFootControl, rightFootControl, leftFootControlRelease, rightFootControlRelease, boostControl;
     public Animator animator;
     public Text perfectText;
     public TextMeshProUGUI leftHitText, rightHitText, boostText;
@@ -29,6 +30,9 @@ public class PlayerMovement : MonoBehaviour
         animator = GetComponentInChildren<Animator>();
         oobSpeed = maxSpeed / outOfBoundsSpeedMultiplyer;
         rubbishSpeed = maxSpeed / 4;
+        rightFootControlRelease = true;
+        leftFootControlRelease = true;
+        boostControl = false;
     }
 
     // Update is called once per frame
@@ -40,25 +44,6 @@ public class PlayerMovement : MonoBehaviour
 
         }
         GUIMain();
-        if(racemanager.raceStart)
-        {
-            if (Input.GetButtonDown("Fire3") && !pause)
-            {
-                Time.timeScale = 0;
-                pause = true;
-                pauseMenu.SetActive(true);
-                firstButton.Select();
-            }
-            else if (Input.GetButtonDown("Fire3") && pause)
-            {
-                Time.timeScale = 1;
-                pause = false;
-                pauseMenu.SetActive(false);
-
-            }
-        }
-
-        //Debugtext();
     }
     #endregion
 
@@ -159,13 +144,22 @@ public class PlayerMovement : MonoBehaviour
         {
             boostReady = false;
         }
-        if (boostReady && Input.GetButtonDown("Jump") && !maxSpeedReached)
+        if (boostControl)
         {
-            boostSpeed = speed + boostSpeedMultiplyer;
-            animator.SetTrigger("Boost");
-            boost = true;
-            boostReady = false;
+            if (boostReady && !maxSpeedReached)
+            {
+                boostSpeed = speed + boostSpeedMultiplyer;
+                animator.SetTrigger("Boost");
+                boost = true;
+                boostReady = false;
+                boostControl = false;
+            }
+            else
+            {
+                boostControl = false;
+            }
         }
+
         if (boost)
         {
             animator.SetBool("LeftStep", false);
@@ -186,63 +180,102 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
     #region Controls
+    public void OnBoost()
+    {
+        boostControl = true;
+    }
+    // pause using start button
+    public void OnPause()
+    {
+        if(racemanager.raceStart)
+        {
+            if(!pause)
+            {
+                Time.timeScale = 0;
+                pause = true;
+                pauseMenu.SetActive(true);
+                firstButton.Select();
+            }
+            else if (pause)
+            {
+                Time.timeScale = 1;
+                pause = false;
+                pauseMenu.SetActive(false);
+            }
+        }
+    }
+    // unpause unsing GUI
     public void OnPauseButton()
     {
         Time.timeScale = 1;
         pause = false;
         pauseMenu.SetActive(false);
     }
-    public void Controls()
+    // trigger controls
+    public void OnRightFoot()
     {
-        //ButtonPress("Fire2", "LeftStep", "RightStep", leftFootSpeed, left, releaseLeft);
-        //ButtonPress("Fire1", "RightStep", "LeftStep", rightFootSpeed, right, releaseRight);
-
+        rightFootControl = true;
+        rightFootControlRelease = false;
+    }
+    public void OnLeftFoot()
+    {
+        leftFootControl = true;
+        leftFootControlRelease = false;
+    }
+    public void OnRightFootRelease()
+    {
+        rightFootControlRelease = true;
+        rightFootControl = false;
+    }
+    public void OnLeftFootRelease()
+    {
+        leftFootControlRelease = true;
+        leftFootControl = false;
+    }
+    public void Controls()
+    {   
         // Left foot
-        if (Input.GetAxis("Fire2") == 1 && leftFootSpeed < maxFootSpeed && (left || speed == 0) && !maxSpeedReached)
+        if (leftFootControl && leftFootSpeed < maxFootSpeed && (left || speed == 0) && !maxSpeedReached)
         {
             animator.SetBool("Trip", false);
             stepTime = 2;
             animator.SetBool("LeftStep", true);
             animator.SetBool("RightStep", false);
             left = true;
-            releaseLeft = true;
             deccelBool = false;
             leftFootSpeed += (footAcceleration / 100) * Time.deltaTime;
             FootSpeedMod(2f, false, leftFootSpeed, leftHitText);
         }
         // Right Foot
-        if (Input.GetAxis("Fire1") == 1 && rightFootSpeed < maxFootSpeed && (right || speed == 0) && !maxSpeedReached)
+        if (rightFootControl && rightFootSpeed < maxFootSpeed && (right || speed == 0) && !maxSpeedReached)
         {
             animator.SetBool("Trip", false);
             stepTime = 2;
             animator.SetBool("RightStep", true);
             animator.SetBool("LeftStep", false);
             right = true;
-            releaseRight = true;
             deccelBool = false;
             rightFootSpeed += (footAcceleration / 100) * Time.deltaTime;
             FootSpeedMod(2f, false, rightFootSpeed, rightHitText);
         }
         // On release buttons
-        if (Input.GetAxis("Fire1") == 0 && releaseRight == true)
+        if (rightFootControlRelease)
         {
             right = false;
             left = true;
-            releaseRight = false;
             FootSpeedMod(2f, true, rightFootSpeed, rightHitText);
             rightFootSpeed = 0;
         }
-        if (Input.GetAxis("Fire2") == 0 && releaseLeft == true)
+        if (leftFootControlRelease)
         {
             right = true;
             left = false;
-            releaseLeft = false;
             FootSpeedMod(2f, true, leftFootSpeed, leftHitText);
             leftFootSpeed = 0;
         }
         // no buttons
 
-        if (Input.GetAxis("Fire2") == 0 && Input.GetAxis("Fire1") == 0)
+        if (rightFootControlRelease && leftFootControlRelease)
         {
             deccelBool = true;
             stepTime -= 1;
@@ -252,24 +285,10 @@ public class PlayerMovement : MonoBehaviour
                 animator.SetBool("RightStep", false);
             }
         }
-    }
-    public void ButtonPress(string button, string animatorTrue, string animatorFalse, float footSpeed, bool foot, bool footRelease)
-    {
-
-        if (Input.GetAxis(button) == 1 && footSpeed < maxFootSpeed && (foot || speed == 0) && !maxSpeedReached)
-        {
-            animator.SetBool("Trip", false);
-            stepTime = 2;
-            animator.SetBool(animatorTrue, true);
-            animator.SetBool(animatorFalse, false);
-            foot = true;
-            footRelease = true;
-            deccelBool = false;
-            footSpeed += (footAcceleration / 100) * Time.deltaTime;
-            //FootSpeedMod(2f, false, footSpeed);
-        }
 
     }
+
+
     public void FootSpeedMod(float mod, bool release, float footSpeed, TextMeshProUGUI footText)
     {
         // least amount on foot
@@ -490,6 +509,84 @@ public class PlayerMovement : MonoBehaviour
 //    leftSlider.value = leftFootSpeed / maxFootSpeed;
 //    rightSlider.value = rightFootSpeed / maxFootSpeed;
 //    perfectText.text = "Perfects : " + perfectCounter.ToString();
+//}
+//public void ControlsOld()
+//{
+//    //ButtonPress("Fire2", "LeftStep", "RightStep", leftFootSpeed, left, releaseLeft);
+//    //ButtonPress("Fire1", "RightStep", "LeftStep", rightFootSpeed, right, releaseRight);       
+//    // Left foot
+//    if (Input.GetAxis("Fire2") == 1 && leftFootSpeed < maxFootSpeed && (left || speed == 0) && !maxSpeedReached)
+//    {
+//        animator.SetBool("Trip", false);
+//        stepTime = 2;
+//        animator.SetBool("LeftStep", true);
+//        animator.SetBool("RightStep", false);
+//        left = true;
+//        releaseLeft = true;
+//        deccelBool = false;
+//        leftFootSpeed += (footAcceleration / 100) * Time.deltaTime;
+//        FootSpeedMod(2f, false, leftFootSpeed, leftHitText);
+//    }
+//    // Right Foot
+//    if (Input.GetAxis("Fire1") == 1 && rightFootSpeed < maxFootSpeed && (right || speed == 0) && !maxSpeedReached)
+//    {
+//        animator.SetBool("Trip", false);
+//        stepTime = 2;
+//        animator.SetBool("RightStep", true);
+//        animator.SetBool("LeftStep", false);
+//        right = true;
+//        releaseRight = true;
+//        deccelBool = false;
+//        rightFootSpeed += (footAcceleration / 100) * Time.deltaTime;
+//        FootSpeedMod(2f, false, rightFootSpeed, rightHitText);
+//    }
+//    // On release buttons
+//    if (Input.GetAxis("Fire1") == 0 && releaseRight == true)
+//    {
+//        right = false;
+//        left = true;
+//        releaseRight = false;
+//        FootSpeedMod(2f, true, rightFootSpeed, rightHitText);
+//        rightFootSpeed = 0;
+//    }
+//    if (Input.GetAxis("Fire2") == 0 && releaseLeft == true)
+//    {
+//        right = true;
+//        left = false;
+//        releaseLeft = false;
+//        FootSpeedMod(2f, true, leftFootSpeed, leftHitText);
+//        leftFootSpeed = 0;
+//    }
+//    // no buttons
+
+//    if (Input.GetAxis("Fire2") == 0 && Input.GetAxis("Fire1") == 0)
+//    {
+//        deccelBool = true;
+//        stepTime -= 1;
+//        if (stepTime < 0)
+//        {
+//            animator.SetBool("LeftStep", false);
+//            animator.SetBool("RightStep", false);
+//        }
+//    }
+
+//}
+//public void ButtonPress(string button, string animatorTrue, string animatorFalse, float footSpeed, bool foot, bool footRelease)
+//{
+
+//    if (Input.GetAxis(button) == 1 && footSpeed < maxFootSpeed && (foot || speed == 0) && !maxSpeedReached)
+//    {
+//        animator.SetBool("Trip", false);
+//        stepTime = 2;
+//        animator.SetBool(animatorTrue, true);
+//        animator.SetBool(animatorFalse, false);
+//        foot = true;
+//        footRelease = true;
+//        deccelBool = false;
+//        footSpeed += (footAcceleration / 100) * Time.deltaTime;
+//        //FootSpeedMod(2f, false, footSpeed);
+//    }
+
 //}
 
 #endregion
