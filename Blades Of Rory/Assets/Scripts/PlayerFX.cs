@@ -140,7 +140,7 @@ public class PlayerFX : MonoBehaviour
             {
                 caContrast -= outOfBoundsMultiplyer * Time.deltaTime;
                 dofLength -= outOfBoundsMultiplyer * Time.deltaTime;
-                vignetteIntensity -= outOfBoundsMultiplyer / 200 * Time.deltaTime;
+                vignetteIntensity -= outOfBoundsMultiplyer / 400 * Time.deltaTime;
                 caPostExp += outOfBoundsMultiplyer / 100 * Time.deltaTime;
             }
             else
@@ -159,14 +159,14 @@ public class PlayerFX : MonoBehaviour
             {
                 caContrast += outOfBoundsMultiplyer * Time.deltaTime;
                 dofLength += outOfBoundsMultiplyer * Time.deltaTime;
-                vignetteIntensity += outOfBoundsMultiplyer / 200 * Time.deltaTime;
+                vignetteIntensity += outOfBoundsMultiplyer / 400 * Time.deltaTime;
                 caPostExp -= outOfBoundsMultiplyer / 100 * Time.deltaTime;
             }
             else
             {
                 caContrast = 42f;
                 dofLength = 93f;
-                vignetteIntensity = 0.315f;
+                vignetteIntensity = 0.24f;
                 caPostExp = 0.2f;
             }
         }
