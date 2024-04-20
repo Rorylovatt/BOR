@@ -9,10 +9,10 @@ using Cinemachine;
 public class Racemanager : MonoBehaviour
 {
     PlayerMovement playerMovement;
-    private bool countDownStart, firstRaceBool;
-    public bool raceFinish, raceStart, isWorking, resetBool, buttonSelect, beatHighScore, highScoreUpdate;
+    private bool firstRaceBool, sendScoreBool;
+    public bool raceFinish, raceStart, isWorking, resetBool, buttonSelect, beatHighScore, highScoreUpdate, countDownStart;
     public float timeElapsed, timeUntilMenu, cameraBlendTime, countDownTimer, resetTimer;
-    public int score;
+    public int score, finalScore;
     public GameObject[] checkPoints = new GameObject[4];
     public bool[] checkPointHit = new bool[4];
     public int laps = 1;
@@ -52,14 +52,14 @@ public class Racemanager : MonoBehaviour
             UpdateGUI();
             CameraControl();
             score = (int)(timeElapsed * 1000f);
-            if(resetBool)
+            if (resetBool)
             {
-                resetTimer -=Time.deltaTime;
-                if(resetTimer < 0)
+                resetTimer -= Time.deltaTime;
+                if (resetTimer < 0)
                 {
                     resetBool = false;
                     resetTimer = resetTimerReset;
-                    countDownText.text = "CAN YOU DO ANY BETTER " + playerLogin.usernameToDisplay + "?\nPRESS 'A' TO START";
+                    countDownText.text = "Can you do any better " + playerLogin.usernameToDisplay + "?\nPress 'A' to start";
                 }
             }
         }
@@ -98,7 +98,7 @@ public class Racemanager : MonoBehaviour
     {
         if (!raceStart && !countDownStart && !resetBool && firstRaceBool)
         {
-            countDownText.text = "wELCOME " + playerLogin.usernameToDisplay + "\nPRESS 'A' TO START";
+            countDownText.text = "Welcome " + playerLogin.usernameToDisplay + "\nPress 'A' to start";
 
         }
         if (!raceStart && Input.GetButtonDown("Jump") && !resetBool)
@@ -107,31 +107,36 @@ public class Racemanager : MonoBehaviour
             countDownStart = true;
             countDownText.text = "";
         }
-        if(countDownStart == true)
+        if (countDownStart == true)
         {
             countDownTimer -= Time.deltaTime;
-            if(countDownTimer <= 3f && countDownTimer > 2.5f)
+            if (countDownTimer <= 3f && countDownTimer > 2.5f)
             {
                 countDownText.text = "3";
             }
-            if (countDownTimer <= 2f && countDownTimer > 1.5f)
+            else if (countDownTimer <= 2f && countDownTimer > 1.5f)
             {
                 countDownText.text = "2";
             }
-            if (countDownTimer <= 1f && countDownTimer > 0.5f)
+            else if (countDownTimer <= 1f && countDownTimer > 0.5f)
             {
                 countDownText.text = "1";
             }
-            if (countDownTimer <= 0f && countDownTimer > -0.5f)
+            else if (countDownTimer <= 0f && countDownTimer > -0.5f)
             {
                 countDownText.text = "GO!";
             }
-            if(countDownTimer <= -0.5f)
+            else if (countDownTimer <= -0.5f)
             {
                 countDownText.text = "";
             }
+            else
+            {
+                countDownText.text = "";
 
-            if(countDownTimer <= 0)
+            }
+
+            if (countDownTimer <= 0)
             {
                 raceStart = true;
             }
@@ -143,6 +148,7 @@ public class Racemanager : MonoBehaviour
         if (raceStart && !raceFinish)
         {
             timeElapsed += Time.deltaTime;
+            sendScoreBool = true;
         }
         if (checkPointHit[3] && laps < 4)
         {
@@ -162,18 +168,30 @@ public class Racemanager : MonoBehaviour
         }
         if (raceFinish)
         {
+            timeElapsed += 0;
             inGameGUI.SetActive(false);
-            playerLogin.SendLeaderboard(-score);
-            //playerLogin.GetLeaderboard();
-
-            if (playerLogin.currentHighScore > score)
+            if(timeUntilMenu < 1.5f && timeUntilMenu < 1f && !sendScoreBool)
             {
                 playerLogin.GetLeaderboardAroundPlayer();
-                highScoreUpdate = true;
+
             }
-            if(playerLogin.currentHighScore < score)
+            if (timeUntilMenu < 1 && timeUntilMenu < 0.5f)
             {
-                highScoreUpdate = false;
+                if (playerLogin.currentHighScore >= score)
+                {
+                    highScoreUpdate = true;
+                }
+                if (playerLogin.currentHighScore < score)
+                {
+                    highScoreUpdate = false;
+                }
+                playerLogin.SendLeaderboard(-score);
+                if (sendScoreBool)
+                {
+                    playerLogin.currentHighScore = score;
+                    sendScoreBool = false;
+                }
+                //playerLogin.GetLeaderboard();
             }
             if (timeUntilMenu > 0)
             {
@@ -182,29 +200,40 @@ public class Racemanager : MonoBehaviour
             }
             else
             {
+                playerLogin.GetLeaderboardAroundPlayer();
                 highScoreMenu.SetActive(true);
-                if(highScoreUpdate)
+                if (playerLogin.createAccountPublic)
                 {
                     playerLogin.GetLeaderboard();
-
-                    finalScoreText.text = "YOU BEAT YOUR BEST TIME!!" +
-                        "\nTime : " + score.ToString().Substring(0, score.ToString().Length - 3) + ":" + score.ToString().Substring(score.ToString().Length - 3, 3)
-                        + "\nCURRENT RANK : " + playerLogin.currentRank.ToString();
-
+                    finalScoreText.text = "Not bad for a rookie! " + "\nTime : " + score.ToString().Substring(0, score.ToString().Length - 3) + ":" + score.ToString().Substring(score.ToString().Length - 3, 3)
+                        + "\nCurrent rank : " + playerLogin.currentRank.ToString();
                 }
-                if(!highScoreUpdate)
+                else
                 {
-                    playerLogin.GetLeaderboard();
+                    if (highScoreUpdate)
+                    {
+                        playerLogin.GetLeaderboard();
 
-                    finalScoreText.text = "YOU DIDN'T BEAT YOUR BEST TIME" +
-                         "\nTime : " + score.ToString().Substring(0, score.ToString().Length - 3) + ":" + score.ToString().Substring(score.ToString().Length - 3, 3)
-                        + "\nBest Time : " + playerLogin.currentHighScore.ToString().Substring(0, playerLogin.currentHighScore.ToString().Length - 3) +
-                        ":" + playerLogin.currentHighScore.ToString().Substring(playerLogin.currentHighScore.ToString().Length - 3, 3)
-                        + "\nCURRENT RANK : " + playerLogin.currentRank.ToString();
+                        finalScoreText.text = "You beat your best time!!" +
+                            "\nTime : " + score.ToString().Substring(0, score.ToString().Length - 3) + ":" + score.ToString().Substring(score.ToString().Length - 3, 3)
+                            + "\nCurrent rank : " + playerLogin.currentRank.ToString();
+
+                    }
+                    if (!highScoreUpdate)
+                    {
+                        playerLogin.GetLeaderboard();
+
+                        finalScoreText.text = "You didn't beat your best time" +
+                             "\nTime : " + score.ToString().Substring(0, score.ToString().Length - 3) + ":" + score.ToString().Substring(score.ToString().Length - 3, 3)
+                            + "\nBest Time : " + playerLogin.currentHighScore.ToString().Substring(0, playerLogin.currentHighScore.ToString().Length - 3) +
+                            ":" + playerLogin.currentHighScore.ToString().Substring(playerLogin.currentHighScore.ToString().Length - 3, 3)
+                            + "\nHighest rank : " + playerLogin.currentRank.ToString();
+                    }
                 }
+
                 // keyboard.active = true; 
             }
-            if(!buttonSelect)
+            if (!buttonSelect)
             {
                 playAgain.Select();
                 buttonSelect = true;
@@ -249,7 +278,7 @@ public class Racemanager : MonoBehaviour
     {
         inGameGUI.SetActive(true);
         player.transform.position = playerTransform.position;
-        player.transform.rotation = playerTransform.rotation;   
+        player.transform.rotation = playerTransform.rotation;
         startCamera.enabled = true;
         finishCamera.enabled = false;
         mainCamera.enabled = false;
@@ -262,8 +291,11 @@ public class Racemanager : MonoBehaviour
         highScoreMenu.SetActive(false);
         timeElapsed = 0;
         playerMovement.animator.SetBool("Win", false);
+        playerMovement.animator.SetBool("Lose", false);
         scoreText.text = "Time : 0.000";
         resetBool = true;
         buttonSelect = false;
+        playerLogin.createAccountPublic = false;
+        playerMovement.perfectCounter = 0;
     }
 }

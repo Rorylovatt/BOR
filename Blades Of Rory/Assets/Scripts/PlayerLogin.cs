@@ -17,7 +17,7 @@ public class PlayerLogin : MonoBehaviour
     public TMP_InputField emailInput, passwordInput, nameInput;
     public Keyboard keyboard;
     public string testEmail, testPassword;
-    public bool emailSwap, login, createAccount;
+    public bool emailSwap, login, createAccount, createAccountPublic;
     public Button selectFirst;
     public string usernameToDisplay;
     Racemanager racemanager;
@@ -36,24 +36,24 @@ public class PlayerLogin : MonoBehaviour
         testPassword = "REW123";
         //keyboard = FindAnyObjectByType<Keyboard>();
         emailInput.text = testEmail;
-        //passwordInput.text = testPassword;
+        passwordInput.text = testPassword;
         racemanager = FindAnyObjectByType<Racemanager>();
     }
     private void Update()
     {
         if (login)
         {
-            if (!emailSwap)
+            if (emailSwap)
             {
                 testEmail = "werrtttyy@hotmail.co.uk";
-               // emailInput.text = testEmail;
+                emailInput.text = testEmail;
 
 
             }
-            if (emailSwap)
+            if (!emailSwap)
             {
                 testEmail = "21440992@stu.mmu.ac.uk";
-                //emailInput.text = testEmail;
+                emailInput.text = testEmail;
 
 
             }
@@ -114,6 +114,7 @@ public class PlayerLogin : MonoBehaviour
             nameInput.gameObject.SetActive(true);
             keyboard.displayName = true;
             keyboard.password = false;
+            createAccountPublic = true;
         }
     }
     public void SubmitName()

@@ -12,9 +12,9 @@ public class PlayerMovement : MonoBehaviour
     public GameObject leftFoot, rightFoot, pauseMenu;
     public Rigidbody playerRb;
     public float maxSpeed, maxFootSpeed, footAcceleration, acceleration, decceleration, explosionForce, rotateSpeed, outOfBoundsSpeedMultiplyer, boostSpeedMultiplyer, speed;
-    public bool boost, maxSpeedReached;
+    public bool boost, maxSpeedReached, leftFootControl, rightFootControl, leftFootControlRelease, rightFootControlRelease;
     private float leftFootSpeed, rightFootSpeed, speedReset, horizontalInput, stepTime, oobSpeed, boostSpeed, rubbishSpeed;
-    private bool deccelBool, left, right, releaseLeft, releaseRight, boostReady, outOfBounds, pause, leftFootControl, rightFootControl, leftFootControlRelease, rightFootControlRelease, boostControl;
+    private bool deccelBool, left, right, releaseLeft, releaseRight, boostReady, outOfBounds, pause, boostControl;
     public Animator animator;
     public Text perfectText;
     public TextMeshProUGUI leftHitText, rightHitText, boostText;
@@ -56,10 +56,19 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            animator.SetBool("Win", true);
+            if(racemanager.score <= 50000)
+            {
+                animator.SetBool("Win", true);
+            }
+            if(racemanager.score > 50000)
+            {
+                animator.SetBool("Lose", true);
+            }
             animator.SetBool("LeftStep", false);
             animator.SetBool("RightStep", false);
             animator.SetBool("Trip", false);
+            leftHitText.text = "";
+            rightHitText.text = "";
         }
         animator.SetFloat("Speed", speed);
         Speed();
@@ -140,10 +149,10 @@ public class PlayerMovement : MonoBehaviour
         {
             boostReady = true;
         }
-        if(perfectCounter < 3)
-        {
-            boostReady = false;
-        }
+        //if(perfectCounter < 3)
+        //{
+        //    boostReady = false;
+        //}
         if (boostControl)
         {
             if (boostReady && !maxSpeedReached)
@@ -232,8 +241,26 @@ public class PlayerMovement : MonoBehaviour
         leftFootControlRelease = true;
         leftFootControl = false;
     }
+    public void ButtonPress(bool button, string animatorTrue, string animatorFalse, float footSpeed, bool foot, TextMeshProUGUI text)
+    {
+
+        if (button && footSpeed < maxFootSpeed && (foot || speed == 0) && !maxSpeedReached)
+        {
+            animator.SetBool("Trip", false);
+            stepTime = 2;
+            animator.SetBool(animatorTrue, true);
+            animator.SetBool(animatorFalse, false);
+            foot = true;
+            deccelBool = false;
+            footSpeed += (footAcceleration / 100) * Time.deltaTime;
+            FootSpeedMod(2f, false, footSpeed, text);
+        }
+
+    }
     public void Controls()
-    {   
+    {
+        //ButtonPress(leftFootControl, "LeftStep", "RightStep", leftFootSpeed, left, leftHitText);
+        //ButtonPress(rightFootControl, "RightStep", "LeftStep", rightFootSpeed, right, rightHitText);
         // Left foot
         if (leftFootControl && leftFootSpeed < maxFootSpeed && (left || speed == 0) && !maxSpeedReached)
         {
@@ -300,7 +327,7 @@ public class PlayerMovement : MonoBehaviour
                 rubbishCounter ++;
                 perfectCounter = 0;
                 footText.text = "Rubbish!";
-                footText.fontSize = 36;
+                footText.fontSize = 26;
 
             }
         }
@@ -313,7 +340,7 @@ public class PlayerMovement : MonoBehaviour
                 rubbishCounter = 0;
                 perfectCounter = 0;
                 footText.text = "OK!";
-                footText.fontSize = 36;
+                footText.fontSize = 26;
 
             }
         }
@@ -326,7 +353,7 @@ public class PlayerMovement : MonoBehaviour
                 rubbishCounter = 0;
                 perfectCounter = 0;
                 footText.text = "Good!";
-                footText.fontSize = 36;
+                footText.fontSize = 26;
             }
         }
         // perfect amount of time on foot
@@ -337,7 +364,12 @@ public class PlayerMovement : MonoBehaviour
             {
                 perfectCounter += 1;
                 footText.text = "Perfect!";
-                footText.fontSize = 36;
+                footText.fontSize = 26;
+
+            }
+            else
+            {
+                footText.fontSize = 0;
 
             }
         }
@@ -371,11 +403,11 @@ public class PlayerMovement : MonoBehaviour
     }
     public void BoostText()
     {
-        if(perfectCounter >= 3 && !racemanager.raceFinish)
+        if(boostReady && !racemanager.raceFinish)
         {
             boostText.text = "Boost Ready!";
         }
-        if(perfectCounter < 3)
+        if(!boostReady)
         {
             boostText.text = "";
         }
