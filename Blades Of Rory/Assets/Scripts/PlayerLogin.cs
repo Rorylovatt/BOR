@@ -33,7 +33,7 @@ public class PlayerLogin : MonoBehaviour
     private void Start()
     {
         selectFirst.Select();
-        testPassword = "REW123";
+        //testPassword = "REW123";
         //keyboard = FindAnyObjectByType<Keyboard>();
         emailInput.text = testEmail;
         passwordInput.text = testPassword;
@@ -41,23 +41,23 @@ public class PlayerLogin : MonoBehaviour
     }
     private void Update()
     {
-        if (login)
-        {
-            if (emailSwap)
-            {
-                testEmail = "werrtttyy@hotmail.co.uk";
-                emailInput.text = testEmail;
+        //if (login)
+        //{
+        //    if (emailSwap)
+        //    {
+        //        testEmail = "werrtttyy@hotmail.co.uk";
+        //        emailInput.text = testEmail;
 
 
-            }
-            if (!emailSwap)
-            {
-                testEmail = "21440992@stu.mmu.ac.uk";
-                emailInput.text = testEmail;
+        //    }
+        //    if (!emailSwap)
+        //    {
+        //        testEmail = "21440992@stu.mmu.ac.uk";
+        //        emailInput.text = testEmail;
 
 
-            }
-        }
+        //    }
+        //}
 
     }
     #region LogIn / Create Account

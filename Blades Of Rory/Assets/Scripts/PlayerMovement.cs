@@ -12,9 +12,9 @@ public class PlayerMovement : MonoBehaviour
     public GameObject leftFoot, rightFoot, pauseMenu;
     public Rigidbody playerRb;
     public float maxSpeed, maxFootSpeed, footAcceleration, acceleration, decceleration, explosionForce, rotateSpeed, outOfBoundsSpeedMultiplyer, boostSpeedMultiplyer, speed;
-    public bool boost, maxSpeedReached, leftFootControl, rightFootControl, leftFootControlRelease, rightFootControlRelease;
+    public bool boost, maxSpeedReached, leftFootControl, rightFootControl, leftFootControlRelease, rightFootControlRelease, outOfBounds;
     private float leftFootSpeed, rightFootSpeed, speedReset, horizontalInput, stepTime, oobSpeed, boostSpeed, rubbishSpeed;
-    private bool deccelBool, left, right, releaseLeft, releaseRight, boostReady, outOfBounds, pause, boostControl;
+    private bool deccelBool, left, right, releaseLeft, releaseRight, boostReady, pause, boostControl;
     public Animator animator;
     public Text perfectText;
     public TextMeshProUGUI leftHitText, rightHitText, boostText;
@@ -23,6 +23,7 @@ public class PlayerMovement : MonoBehaviour
     Racemanager racemanager;
     public Button firstButton;
     public PlayerInput playerInput;
+    public GameObject rZone;
     // hello
     void Start()
     {
@@ -38,6 +39,14 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(outOfBounds)
+        {
+            rZone.SetActive(true);
+        }
+        else
+        {
+            rZone.SetActive(false);
+        }
         if (racemanager.raceStart)
         {
             Movement();
@@ -326,9 +335,11 @@ public class PlayerMovement : MonoBehaviour
             {
                 rubbishCounter ++;
                 perfectCounter = 0;
-                footText.text = "Rubbish!";
-                footText.fontSize = 26;
-
+                if (!outOfBounds)
+                {
+                    footText.text = "Rubbish!";
+                    footText.fontSize = 26;
+                }
             }
         }
         // low amount on foot
@@ -339,8 +350,11 @@ public class PlayerMovement : MonoBehaviour
             {
                 rubbishCounter = 0;
                 perfectCounter = 0;
-                footText.text = "OK!";
-                footText.fontSize = 26;
+                if (!outOfBounds)
+                {
+                    footText.text = "OK!";
+                    footText.fontSize = 26;
+                }
 
             }
         }
@@ -352,8 +366,11 @@ public class PlayerMovement : MonoBehaviour
             {
                 rubbishCounter = 0;
                 perfectCounter = 0;
-                footText.text = "Good!";
-                footText.fontSize = 26;
+                if (!outOfBounds)
+                {
+                    footText.text = "Good!";
+                    footText.fontSize = 26;
+                }
             }
         }
         // perfect amount of time on foot
@@ -363,9 +380,11 @@ public class PlayerMovement : MonoBehaviour
             if (release)
             {
                 perfectCounter += 1;
-                footText.text = "Perfect!";
-                footText.fontSize = 26;
-
+                if(!outOfBounds)
+                {
+                    footText.text = "Perfect!";
+                    footText.fontSize = 26;
+                }
             }
             else
             {

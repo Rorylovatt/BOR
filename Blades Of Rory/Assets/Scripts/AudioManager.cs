@@ -13,7 +13,7 @@ public class AudioManager : MonoBehaviour
     public AudioSource[] trips = new AudioSource[3];
     private int tripSelector;
     private float tripTimer, musicTimer;
-    private bool musicReset, tripReset;
+    private bool musicReset, tripReset, musicWobbler;
     public AudioClip countdown, go, countdownStart;
     void Start()
     {
@@ -72,6 +72,46 @@ public class AudioManager : MonoBehaviour
             if (!music[1].isPlaying)
             {
                 music[1].Play();
+            }
+            if (playerMovement.outOfBounds && !playerMovement.boost)
+            {
+                if (music[1].pitch > 0.85f)
+                {
+                    music[1].pitch -= 0.2f * Time.deltaTime;
+                    musicWobbler = false;
+                }
+                else
+                {
+                    if (music[1].pitch < 0.75f && !musicWobbler)
+                    {
+                        musicWobbler = true;
+                    }
+                    if (music[1].pitch > 0.85f && musicWobbler)
+                    {
+                        musicWobbler = false;
+                    }
+                    if(musicWobbler)
+                    {
+                        music[1].pitch += 0.2f * Time.deltaTime;
+                    }
+                    else
+                    {
+                        music[1].pitch -= 0.2f * Time.deltaTime;
+
+                    }
+                }
+            }
+            else
+            {
+                musicWobbler = false;
+                if (music[1].pitch < 1f)
+                {
+                    music[1].pitch += 0.5f * Time.deltaTime;
+                }
+                if (music[1].pitch > 1f)
+                {
+                    music[1].pitch = 1f;   
+                }
             }
         }
         if (racemanager.raceFinish)

@@ -14,9 +14,12 @@ public class PlayerFX : MonoBehaviour
     public Volume volume;
     ChromaticAberration aberration;
     LensDistortion lensDistortion;
+    DepthOfField depthOfField;
+    Vignette vignette;
+    ColorAdjustments adjustments;
     public ParticleSystem[] blades = new ParticleSystem[2];
     public ParticleSystem speedLines;
-    public float chromaAberFloat, lensDistFloat, shakeDecel;
+    public float chromaAberFloat, lensDistFloat, shakeDecel, dofLength, vignetteIntensity, caPostExp, caContrast, outOfBoundsMultiplyer;
     private bool decel, fxFinish, boostFx, shakeBoost, shakeDecelBool;
     public CinemachineVirtualCamera virtualCamera;
     private float ampGain = 0;
@@ -25,6 +28,9 @@ public class PlayerFX : MonoBehaviour
         playerMovement = GetComponent<PlayerMovement>();
         volume.profile.TryGet(out aberration);
         volume.profile.TryGet(out lensDistortion);
+        volume.profile.TryGet(out depthOfField);
+        volume.profile.TryGet(out vignette);
+        volume.profile.TryGet(out adjustments);
 
         chromaAberFloat = 0.1f;
         lensDistFloat = 0f;
@@ -91,11 +97,11 @@ public class PlayerFX : MonoBehaviour
         {
             ampGain = 0;
         }
-        if(playerMovement.maxSpeedReached)
+        if (playerMovement.maxSpeedReached)
         {
             ampGain = 0.5f;
         }
-        
+
     }
     public void CameraShakeDecel(float decelMultiplyer)
     {
@@ -106,6 +112,11 @@ public class PlayerFX : MonoBehaviour
         CameraShake();
         aberration.intensity.Override(chromaAberFloat);
         lensDistortion.intensity.Override(lensDistFloat);
+        depthOfField.focalLength.Override(dofLength);
+        vignette.intensity.Override(vignetteIntensity);
+        adjustments.postExposure.Override(caPostExp);
+        adjustments.contrast.Override(caContrast);
+
 
         if (playerMovement.boost && !fxFinish)
         {
@@ -122,6 +133,42 @@ public class PlayerFX : MonoBehaviour
             shakeBoost = false;
             fxFinish = false;
             shakeDecelBool = false;
+        }
+        if (!playerMovement.outOfBounds)
+        {
+            if(caContrast > 12f)
+            {
+                caContrast -= outOfBoundsMultiplyer * Time.deltaTime;
+                dofLength -= outOfBoundsMultiplyer * Time.deltaTime;
+                vignetteIntensity -= outOfBoundsMultiplyer / 200 * Time.deltaTime;
+                caPostExp += outOfBoundsMultiplyer / 100 * Time.deltaTime;
+            }
+            else
+            {
+                caContrast = 12f;
+                dofLength = 63f;
+                vignetteIntensity = 0.165f;
+                caPostExp = 0.5f;
+
+            }
+
+        }
+        if(playerMovement.outOfBounds && !playerMovement.boost)
+        {
+            if(caContrast < 42f)
+            {
+                caContrast += outOfBoundsMultiplyer * Time.deltaTime;
+                dofLength += outOfBoundsMultiplyer * Time.deltaTime;
+                vignetteIntensity += outOfBoundsMultiplyer / 200 * Time.deltaTime;
+                caPostExp -= outOfBoundsMultiplyer / 100 * Time.deltaTime;
+            }
+            else
+            {
+                caContrast = 42f;
+                dofLength = 93f;
+                vignetteIntensity = 0.315f;
+                caPostExp = 0.2f;
+            }
         }
 
     }
