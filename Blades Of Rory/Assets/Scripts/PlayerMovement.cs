@@ -12,9 +12,9 @@ public class PlayerMovement : MonoBehaviour
     public GameObject leftFoot, rightFoot, pauseMenu;
     public Rigidbody playerRb;
     public float maxSpeed, maxFootSpeed, footAcceleration, acceleration, decceleration, explosionForce, rotateSpeed, outOfBoundsSpeedMultiplyer, boostSpeedMultiplyer, speed;
-    public bool boost, maxSpeedReached, leftFootControl, rightFootControl, leftFootControlRelease, rightFootControlRelease, outOfBounds;
+    public bool boost, maxSpeedReached, leftFootControl, rightFootControl, leftFootControlRelease, rightFootControlRelease, outOfBounds, boostReady, boostControl;
     private float leftFootSpeed, rightFootSpeed, speedReset, horizontalInput, stepTime, oobSpeed, boostSpeed, rubbishSpeed;
-    private bool deccelBool, left, right, releaseLeft, releaseRight, boostReady, pause, boostControl;
+    private bool deccelBool, left, right, releaseLeft, releaseRight, pause, textStart;
     public Animator animator;
     public Text perfectText;
     public TextMeshProUGUI leftHitText, rightHitText, boostText;
@@ -53,6 +53,14 @@ public class PlayerMovement : MonoBehaviour
 
         }
         GUIMain();
+        if(racemanager.countDownTimer > -0.5f)
+        {
+            textStart = false;
+        }
+        else
+        {
+            textStart = true;
+        }
     }
     #endregion
 
@@ -331,7 +339,7 @@ public class PlayerMovement : MonoBehaviour
         if (footSpeed > 0 && footSpeed < maxFootSpeed / 2)
         {
             FootModFunc(mod, release, 5f);
-            if (release)
+            if (release && textStart)
             {
                 rubbishCounter ++;
                 perfectCounter = 0;
@@ -346,7 +354,7 @@ public class PlayerMovement : MonoBehaviour
         if (footSpeed > maxFootSpeed / 2 && footSpeed < maxFootSpeed / 1.5f)
         {
             FootModFunc(mod, release, 2f);
-            if (release)
+            if (release && textStart)
             {
                 rubbishCounter = 0;
                 perfectCounter = 0;
@@ -362,7 +370,7 @@ public class PlayerMovement : MonoBehaviour
         if (footSpeed > maxFootSpeed / 1.5f && footSpeed < maxFootSpeed / 1.2f)
         {
             FootModFunc(mod, release, 1.5f);
-            if (release)
+            if (release && textStart)
             {
                 rubbishCounter = 0;
                 perfectCounter = 0;
@@ -377,7 +385,7 @@ public class PlayerMovement : MonoBehaviour
         if (footSpeed > maxFootSpeed / 1.2f && footSpeed <= maxFootSpeed)
         {
             FootModFunc(mod, release, 1.2f);
-            if (release)
+            if (release && textStart)
             {
                 perfectCounter += 1;
                 if(!outOfBounds)

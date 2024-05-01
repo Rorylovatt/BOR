@@ -297,5 +297,7 @@ public class Racemanager : MonoBehaviour
         buttonSelect = false;
         playerLogin.createAccountPublic = false;
         playerMovement.perfectCounter = 0;
+        playerMovement.boostReady = false;
+        playerMovement.boostControl = false;
     }
 }
